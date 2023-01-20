@@ -3,12 +3,11 @@ import System.IO
 main = do
    contents <- readFile "input.txt"
    let wordsList = words contents
-   mapM scan_token wordsList
+   mapM_ scan_token wordsList
    --scan wordsList
 
 
--- This function takes a list of tokes from a file
--- and scannes them
+-- This function takes a tokes and scannes it
 scan_token token = do
     putStr token -- Print the token
     putStr " - " -- Print deliminator
