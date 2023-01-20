@@ -7,22 +7,27 @@ main = do
    --scan wordsList
 
 
--- This function takes a tokes and scannes it
+-- scan_token - takes a token and scannes it
 scan_token token = do
     putStr token -- Print the token
     putStr " - " -- Print deliminator
 
-    if token == "test" 
+    if token == "test"
         then do
-            let firstLetter = head token
-            putStr " ("
-            putChar firstLetter
-            putStr ") "
-            putStrLn "aha!"
-        else putStrLn "Not test"
+            print_error ("Not allowed to write '" ++ token ++ "'. ")
+        else putStrLn "OK"
 
 
--- This function takes a list of tokes from a file
+-- print_error - prints a error message
+print_error error_message = do
+    putStrLn ("(ERROR) " ++ error_message)
+
+
+
+
+
+
+-- scan - takes a list of tokes from a file
 -- and scannes them
 scan [] = return () -- Check for empty list
 scan (token:tokens) = do
