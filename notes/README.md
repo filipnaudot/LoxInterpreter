@@ -5,7 +5,7 @@
 # Lists
 
 ### prepend and append
-> : Add to the start of a list
+> : Add to the start of a list.
 
 takes a number and a list of numbers or a character and a list of characters
 ```
@@ -14,9 +14,9 @@ takes a number and a list of numbers or a character and a list of characters
 
 <br/>
 
-> ++ Add to the end of a list
+> ++ Add to the end of a list.
 
-takes two lists
+Takes two lists.
 ```
 [1,2,3,4] ++ [9,10,11,12] --> [1,2,3,4,9,10,11,12]  
 ``` 
@@ -25,11 +25,11 @@ takes two lists
 <br/>
 
 ### Index
-> !! Index in a list
+> !! Index in a list.
 ```
 list !! 6
 ````
- gives the 6th elemtn in the list
+ Gives the 6th elemtn in the list.
 
 Example:
 ```
