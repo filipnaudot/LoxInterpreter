@@ -2,10 +2,8 @@ module Scanner (scanTokens) where
 
 import Data.Maybe
 import Data.Char
-
-import Tokens
-
-import Debug.Trace
+import Tokens           -- Import data types.
+import Debug.Trace      -- For debug prints.
 
 -- Example of a token list with one token: [TOKEN LEFT_PAREN "test str" (ID "str_id") 1]
 scanTokens :: [Char] -> [Token]
