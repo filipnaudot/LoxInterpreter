@@ -1,5 +1,3 @@
-COMPILER=ghc
-
 default: clean
 
 clean:
