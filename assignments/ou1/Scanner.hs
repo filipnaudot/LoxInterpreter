@@ -27,4 +27,16 @@ scan (x:xs) lineNumber =
         ';' -> (TOKEN SEMICOLON ";" NONE lineNumber) : scan xs (lineNumber + 1)
         '/' -> (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber + 1)
         '*' -> (TOKEN STAR "*" NONE lineNumber) : scan xs (lineNumber + 1)
-        --'!' -> if (head xs) == '=' then (TOKEN BANG_EQUAL "!=" NONE lineNumber) : scan (tail xs) (lineNumber + 1) else (TOKEN BANG "!" NONE lineNumber)
+
+        -- Check for "\" and potentially "\n"
+        '\\' -> if (not (null xs))
+                    then (TOKEN RETURN "\n" NONE lineNumber) : scan (tail xs) (lineNumber + 1) 
+                    else [TOKEN SLASH "\\" NONE lineNumber]
+        
+        -- Check for "!" and potentially "!="
+        '!' -> if (not (null xs))
+                    then (TOKEN BANG_EQUAL "!=" NONE lineNumber) : scan (tail xs) (lineNumber + 1) 
+                    else [TOKEN BANG "!" NONE lineNumber]
+        
+        
+        _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber + 1)
