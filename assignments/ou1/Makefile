@@ -1,0 +1,6 @@
+COMPILER=ghc
+
+default: clean
+
+clean:
+	rm -f *.hi *.o
