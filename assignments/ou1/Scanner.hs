@@ -7,36 +7,42 @@ import Debug.Trace      -- For debug prints.
 
 -- Example of a token list with one token: [TOKEN LEFT_PAREN "test str" (ID "str_id") 1]
 scanTokens :: [Char] -> [Token]
-scanTokens str =
-    trace "Start" $
-    let tokens = scan str 0
-    in trace "End" tokens
+scanTokens str = scan str 0
 
 scan :: [Char] -> Int -> [Token]
 scan [] _ = []
 scan (x:xs) lineNumber =
     case x of
-        '(' -> (TOKEN LEFT_PAREN "(" NONE lineNumber) : scan xs (lineNumber + 1)
-        ')' -> (TOKEN RIGHT_PAREN ")" NONE lineNumber) : scan xs (lineNumber + 1)
-        '{' -> (TOKEN LEFT_BRACE "{" NONE lineNumber) : scan xs (lineNumber + 1)
-        '}' -> (TOKEN RIGHT_BRACE "}" NONE lineNumber) : scan xs (lineNumber + 1)
-        ',' -> (TOKEN COMMA "," NONE lineNumber) : scan xs (lineNumber + 1)
-        '.' -> (TOKEN DOT "." NONE lineNumber) : scan xs (lineNumber + 1)
-        '-' -> (TOKEN MINUS "-" NONE lineNumber) : scan xs (lineNumber + 1)
-        '+' -> (TOKEN PLUS "+" NONE lineNumber) : scan xs (lineNumber + 1)
-        ';' -> (TOKEN SEMICOLON ";" NONE lineNumber) : scan xs (lineNumber + 1)
-        '/' -> (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber + 1)
-        '*' -> (TOKEN STAR "*" NONE lineNumber) : scan xs (lineNumber + 1)
+        -- Ignore whitespace.
+        ' ' -> scan xs lineNumber
+        '\r' -> scan xs lineNumber
+        '\t' -> scan xs lineNumber
+        '\n' -> scan xs (lineNumber + 1) 
 
-        -- Check for "\" and potentially "\n"
-        '\\' -> if (not (null xs))
-                    then (TOKEN RETURN "\n" NONE lineNumber) : scan (tail xs) (lineNumber + 1) 
-                    else [TOKEN SLASH "\\" NONE lineNumber]
+        '(' -> (TOKEN LEFT_PAREN "(" NONE lineNumber) : scan xs (lineNumber)
+        ')' -> (TOKEN RIGHT_PAREN ")" NONE lineNumber) : scan xs (lineNumber)
+        '{' -> (TOKEN LEFT_BRACE "{" NONE lineNumber) : scan xs (lineNumber)
+        '}' -> (TOKEN RIGHT_BRACE "}" NONE lineNumber) : scan xs (lineNumber)
+        ',' -> (TOKEN COMMA "," NONE lineNumber) : scan xs (lineNumber)
+        '.' -> (TOKEN DOT "." NONE lineNumber) : scan xs (lineNumber)
+        '-' -> (TOKEN MINUS "-" NONE lineNumber) : scan xs (lineNumber)
+        '+' -> (TOKEN PLUS "+" NONE lineNumber) : scan xs (lineNumber)
+        ';' -> (TOKEN SEMICOLON ";" NONE lineNumber) : scan xs (lineNumber)
+        '/' -> (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
+        '*' -> (TOKEN STAR "*" NONE lineNumber) : scan xs (lineNumber)
+        '=' -> (TOKEN EQUAL "=" NONE lineNumber) : scan xs (lineNumber)
         
         -- Check for "!" and potentially "!="
-        '!' -> if (not (null xs))
-                    then (TOKEN BANG_EQUAL "!=" NONE lineNumber) : scan (tail xs) (lineNumber + 1) 
-                    else [TOKEN BANG "!" NONE lineNumber]
+        '!' -> if (not (null xs) && not (isWhiteSpace (xs !! 0)))
+                    then (TOKEN BANG_EQUAL "!=" NONE lineNumber) : scan (tail xs) (lineNumber) 
+                    else (TOKEN BANG "!" NONE lineNumber) : scan xs (lineNumber)
+    
         
-        
-        _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber + 1)
+        _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber)
+
+
+--isWhiteSpace :: String -> IO Bool
+isWhiteSpace character = do
+    if character == ' ' || character == '\r' || character == '\t' || character == '\n'
+        then True
+        else False
