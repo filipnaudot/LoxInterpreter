@@ -60,5 +60,7 @@ scan (x:xs) lineNumber =
         _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber)
 
 
+-- Checks if a given character is a white-space
+-- Returns True if white-space, else false
 isWhiteSpace :: Char -> Bool
 isWhiteSpace character = character `elem` [' ', '\r', '\t', '\n']
