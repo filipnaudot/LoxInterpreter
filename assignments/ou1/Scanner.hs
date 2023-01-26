@@ -57,7 +57,7 @@ scan (x:xs) lineNumber =
                     else (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
     
         
-        _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber)
+        _   -> error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
 
 -- Checks if a given character is a white-space
