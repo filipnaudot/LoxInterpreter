@@ -59,7 +59,3 @@ scan (x:xs) lineNumber =
 
 isWhiteSpace :: Char -> Bool
 isWhiteSpace character = character `elem` [' ', '\r', '\t', '\n']
---isWhiteSpace character = do
---    if character == ' ' || character == '\r' || character == '\t' || character == '\n'
---        then True
---        else False
