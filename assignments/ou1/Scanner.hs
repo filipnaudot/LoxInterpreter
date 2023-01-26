@@ -49,9 +49,12 @@ scan (x:xs) lineNumber =
         '>' -> if (not (null xs) && ((xs !! 0) == '='))
                     then (TOKEN GREATER_EQUAL ">=" NONE lineNumber) : scan (tail xs) (lineNumber) 
                     else (TOKEN GREATER ">" NONE lineNumber) : scan xs (lineNumber)
-
+        
         -- Check for "/" and potentially "//" (comment)
-        '/' -> (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
+        '/' -> if (not (null xs) && ((xs !! 0) == '/'))
+                    -- TODO: handle advancing to new line in the <then>
+                    then (TOKEN SLASH "//" NONE lineNumber) : scan (tail xs) (lineNumber) 
+                    else (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
     
         
         _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber)
