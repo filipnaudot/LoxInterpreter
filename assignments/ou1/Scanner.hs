@@ -28,20 +28,37 @@ scan (x:xs) lineNumber =
         '-' -> (TOKEN MINUS "-" NONE lineNumber) : scan xs (lineNumber)
         '+' -> (TOKEN PLUS "+" NONE lineNumber) : scan xs (lineNumber)
         ';' -> (TOKEN SEMICOLON ";" NONE lineNumber) : scan xs (lineNumber)
-        '/' -> (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
         '*' -> (TOKEN STAR "*" NONE lineNumber) : scan xs (lineNumber)
-        '=' -> (TOKEN EQUAL "=" NONE lineNumber) : scan xs (lineNumber)
-        
+
         -- Check for "!" and potentially "!="
         '!' -> if (not (null xs) && not (isWhiteSpace (xs !! 0)))
                     then (TOKEN BANG_EQUAL "!=" NONE lineNumber) : scan (tail xs) (lineNumber) 
                     else (TOKEN BANG "!" NONE lineNumber) : scan xs (lineNumber)
+        
+        -- Check for "=" and potentially "=="
+        '=' -> if (not (null xs) && ((xs !! 0) == '='))
+                    then (TOKEN EQUAL_EQUAL "==" NONE lineNumber) : scan (tail xs) (lineNumber) 
+                    else (TOKEN EQUAL "=" NONE lineNumber) : scan xs (lineNumber) 
+
+        -- Check for "<" and potentially "<="
+        '<' -> if (not (null xs) && ((xs !! 0) == '='))
+                    then (TOKEN LESS_EQUAL "<=" NONE lineNumber) : scan (tail xs) (lineNumber) 
+                    else (TOKEN LESS "<" NONE lineNumber) : scan xs (lineNumber)
+
+        -- Check for ">" and potentially ">="
+        '>' -> if (not (null xs) && ((xs !! 0) == '='))
+                    then (TOKEN GREATER_EQUAL ">=" NONE lineNumber) : scan (tail xs) (lineNumber) 
+                    else (TOKEN GREATER ">" NONE lineNumber) : scan xs (lineNumber)
+
+        -- Check for "/" and potentially "//" (comment)
+        '/' -> (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
     
         
         _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber)
 
 
 --isWhiteSpace :: String -> IO Bool
+--isWhiteSpace character = character elem [' ', '\r', '\t', '\n']
 isWhiteSpace character = do
     if character == ' ' || character == '\r' || character == '\t' || character == '\n'
         then True
