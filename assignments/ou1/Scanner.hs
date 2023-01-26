@@ -57,9 +57,9 @@ scan (x:xs) lineNumber =
         _   -> [TOKEN EOF "" NONE lineNumber] ++ scan xs (lineNumber)
 
 
---isWhiteSpace :: String -> IO Bool
---isWhiteSpace character = character elem [' ', '\r', '\t', '\n']
-isWhiteSpace character = do
-    if character == ' ' || character == '\r' || character == '\t' || character == '\n'
-        then True
-        else False
+isWhiteSpace :: Char -> Bool
+isWhiteSpace character = character `elem` [' ', '\r', '\t', '\n']
+--isWhiteSpace character = do
+--    if character == ' ' || character == '\r' || character == '\t' || character == '\n'
+--        then True
+--        else False
