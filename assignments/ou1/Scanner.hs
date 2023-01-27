@@ -31,7 +31,8 @@ scan (x:xs) lineNumber =
         '*' -> (TOKEN STAR "*" NONE lineNumber) : scan xs (lineNumber)
 
         -- Check for "!" and potentially "!="
-        '!' -> if (not (null xs) && not (isWhiteSpace (xs !! 0)))
+        --'!' -> if (not (null xs) && not (isWhiteSpace (xs !! 0)))
+        '!' -> if (not (null xs) && ((xs !! 0) == '='))
                     then (TOKEN BANG_EQUAL "!=" NONE lineNumber) : scan (tail xs) (lineNumber) 
                     else (TOKEN BANG "!" NONE lineNumber) : scan xs (lineNumber)
         
@@ -52,12 +53,18 @@ scan (x:xs) lineNumber =
         
         -- Check for "/" and potentially "//" (comment)
         '/' -> if (not (null xs) && ((xs !! 0) == '/'))
-                    -- TODO: handle advancing to new line in the <then>
-                    then (TOKEN SLASH "//" NONE lineNumber) : scan (tail xs) (lineNumber) 
+                    then scan (removeComment (tail xs)) (lineNumber + 1)
                     else (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
     
         
         _   -> error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
+
+
+removeComment :: String -> String
+removeComment "" = ""
+removeComment (x:xs)
+    | x == '\n' = xs
+    | otherwise = removeComment xs
 
 
 -- Checks if a given character is a white-space
