@@ -69,9 +69,21 @@ scan (x:xs) lineNumber =
         '/' -> if (not (null xs) && ((xs !! 0) == '/'))
                     then scan (removeComment (tail xs)) (lineNumber + 1)
                     else (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
-    
-        
-        _   -> error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
+
+        _   -> if isDigit x
+                then let (token, remaining) = number (x:xs) lineNumber
+                    in token : (scan remaining lineNumber)
+                else error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
+
+
+number :: String -> Int -> (Token, String)
+number input lineNumber = 
+    let (num, remaining) = span isDigit input
+        num' = if not (null remaining) && (head remaining == '.') 
+                  then num ++ (takeWhile isDigit (tail remaining))
+                  else num
+    in ((TOKEN NUMBER (show (read num' :: Double)) NONE lineNumber), remaining)
+
 
 
 -- removeComment - Removes a comment from a given string, a comment
