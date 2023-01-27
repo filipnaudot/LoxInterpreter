@@ -25,7 +25,7 @@ scanTokens str = scan str 1
 --  Int    - The line number to which the character belongs.
 -- Returns a list of lox lexemes.
 scan :: [Char] -> Int -> [Token]
-scan [] _ = []
+scan [] lineNumber = [TOKEN EOF "" NONE lineNumber]
 scan (x:xs) lineNumber =
     case x of
         -- Ignore whitespace.
