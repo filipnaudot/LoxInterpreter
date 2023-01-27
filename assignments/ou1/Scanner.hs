@@ -31,7 +31,6 @@ scan (x:xs) lineNumber =
         '*' -> (TOKEN STAR "*" NONE lineNumber) : scan xs (lineNumber)
 
         -- Check for "!" and potentially "!="
-        --'!' -> if (not (null xs) && not (isWhiteSpace (xs !! 0)))
         '!' -> if (not (null xs) && ((xs !! 0) == '='))
                     then (TOKEN BANG_EQUAL "!=" NONE lineNumber) : scan (tail xs) (lineNumber) 
                     else (TOKEN BANG "!" NONE lineNumber) : scan xs (lineNumber)
