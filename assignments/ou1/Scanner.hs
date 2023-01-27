@@ -5,10 +5,25 @@ import Data.Char
 import Tokens           -- Import data types.
 import Debug.Trace      -- For debug prints.
 
--- Example of a token list with one token: [TOKEN LEFT_PAREN "test str" (ID "str_id") 1]
-scanTokens :: [Char] -> [Token]
-scanTokens str = scan str 0
 
+
+
+-- scanTokens - Initialize the scanning by running
+--              the scan function with the given
+--              "lox-string" and line number 0.
+-- Input:
+--  [Char]    - The "lox-string" to parse.
+-- Returns a list of lox lexemes.
+scanTokens :: [Char] -> [Token]
+scanTokens str = scan str 1
+
+
+-- scan    - Scans a given "lox-string" character by character
+--           recursively and creates a list of tokens.
+-- Input:
+--  [Char] - The "lox-string" to parse.
+--  Int    - The line number to which the character belongs.
+-- Returns a list of lox lexemes.
 scan :: [Char] -> Int -> [Token]
 scan [] _ = []
 scan (x:xs) lineNumber =
@@ -59,14 +74,22 @@ scan (x:xs) lineNumber =
         _   -> error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
 
-removeComment :: String -> String
+-- removeComment - Removes a comment from a given string, a comment
+--                 goes until the end of the line or string.
+-- Input:
+--  [Char]       - The string containing the comment.
+-- Returns the remaining string after the comment.
+removeComment :: [Char] -> [Char]
 removeComment "" = ""
 removeComment (x:xs)
     | x == '\n' = xs
     | otherwise = removeComment xs
 
 
--- Checks if a given character is a white-space
+-- isWhiteSpace - Checks if a given character is a white-space.
+--
+-- Input:
+--  Char        - The character to inspect.
 -- Returns True if white-space, else false
 isWhiteSpace :: Char -> Bool
 isWhiteSpace character = character `elem` [' ', '\r', '\t', '\n']
