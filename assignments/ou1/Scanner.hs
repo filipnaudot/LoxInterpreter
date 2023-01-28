@@ -74,7 +74,7 @@ scan (x:xs) lineNumber =
                 then let (token, rest) = number (x:xs) lineNumber
                     in token : (scan rest lineNumber)
                 else if isAlpha x
-                    then let (token, rest) = string (x:xs) lineNumber
+                    then let (token, rest) = identifier (x:xs) lineNumber
                         in token : (scan rest lineNumber)
                 else error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
@@ -93,17 +93,17 @@ number inputString lineNumber =
   in (TOKEN NUMBER numString (NUM numValue) lineNumber, rest)
 
 
--- string  - Extracts a string from given "lox-string".
+-- identifier  - Extracts an identifier from given "lox-string".
 --
 -- Input:
---  [Char] - The "lox-string" containing the string.
+--  [Char] - The "lox-string" containing the identifier.
 --  Int    - The line number to which the input belongs.
 -- Returns a tuple containing the token
---         for the string and the remaining "lox-string".
-string :: [Char] -> Int -> (Token, [Char])
-string inputString lineNumber = 
+--         for the identifier and the remaining "lox-string".
+identifier :: [Char] -> Int -> (Token, [Char])
+identifier inputString lineNumber = 
   let (charString, rest) = span isAlpha inputString
-  in (TOKEN STRING charString (STR charString) lineNumber, rest)
+  in (TOKEN IDENTIFIER charString (ID charString) lineNumber, rest)
 
 
 
