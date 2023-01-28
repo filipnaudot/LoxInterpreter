@@ -79,7 +79,7 @@ scan (x:xs) lineNumber =
                 else error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
 
--- number  - Extracts a number from given "lox-string".
+-- number  - Extracts a number from a given "lox-string".
 --
 -- Input:
 --  [Char] - The "lox-string" containing the number.
@@ -93,7 +93,7 @@ number inputString lineNumber =
   in (TOKEN NUMBER numString (NUM numValue) lineNumber, rest)
 
 
--- identifier  - Extracts an identifier from given "lox-string".
+-- identifier  - Extracts an identifier from a given "lox-string".
 --
 -- Input:
 --  [Char] - The "lox-string" containing the identifier.
