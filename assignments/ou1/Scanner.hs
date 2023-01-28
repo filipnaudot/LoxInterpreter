@@ -71,19 +71,23 @@ scan (x:xs) lineNumber =
                     else (TOKEN SLASH "/" NONE lineNumber) : scan xs (lineNumber)
 
         _   -> if isDigit x
-                then let (token, remaining) = number (x:xs) lineNumber
-                    in token : (scan remaining lineNumber)
+                then let (token, rest) = number (x:xs) lineNumber
+                    in token : (scan rest lineNumber)
                 else error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
 
-number :: String -> Int -> (Token, String)
-number input lineNumber = 
-    let (num, remaining) = span isDigit input
-        num' = if not (null remaining) && (head remaining == '.') 
-                  then num ++ (takeWhile isDigit (tail remaining))
-                  else num
-    in ((TOKEN NUMBER (show (read num' :: Double)) NONE lineNumber), remaining)
-
+-- number  - Extracts a number from given string.
+--
+-- Input:
+--  [Char] - The string containing the number.
+--  Int    - The line number to which the character belongs.
+-- Returns a tuple containing the token
+--         for the Float number and the remaining string.
+number :: [Char] -> Int -> (Token, [Char])
+number inputString lineNumber = 
+  let (numString, rest) = span (\c -> isDigit c || c == '.') inputString
+      numValue = read numString :: Float
+  in (TOKEN NUMBER numString (NUM numValue) lineNumber, rest)
 
 
 -- removeComment - Removes a comment from a given string, a comment
