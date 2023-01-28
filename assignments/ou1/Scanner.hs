@@ -73,21 +73,38 @@ scan (x:xs) lineNumber =
         _   -> if isDigit x
                 then let (token, rest) = number (x:xs) lineNumber
                     in token : (scan rest lineNumber)
+                else if isAlpha x
+                    then let (token, rest) = string (x:xs) lineNumber
+                        in token : (scan rest lineNumber)
                 else error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
 
--- number  - Extracts a number from given string.
+-- number  - Extracts a number from given "lox-string".
 --
 -- Input:
---  [Char] - The string containing the number.
---  Int    - The line number to which the character belongs.
+--  [Char] - The "lox-string" containing the number.
+--  Int    - The line number to which the input belongs.
 -- Returns a tuple containing the token
---         for the Float number and the remaining string.
+--         for the Float number and the remaining "lox-string".
 number :: [Char] -> Int -> (Token, [Char])
 number inputString lineNumber = 
   let (numString, rest) = span (\c -> isDigit c || c == '.') inputString
       numValue = read numString :: Float
   in (TOKEN NUMBER numString (NUM numValue) lineNumber, rest)
+
+
+-- string  - Extracts a string from given "lox-string".
+--
+-- Input:
+--  [Char] - The "lox-string" containing the string.
+--  Int    - The line number to which the input belongs.
+-- Returns a tuple containing the token
+--         for the string and the remaining "lox-string".
+string :: [Char] -> Int -> (Token, [Char])
+string inputString lineNumber = 
+  let (charString, rest) = span isAlpha inputString
+  in (TOKEN STRING charString (STR charString) lineNumber, rest)
+
 
 
 -- removeComment - Removes a comment from a given string, a comment
