@@ -89,8 +89,11 @@ scan (x:xs) lineNumber =
 number :: [Char] -> Int -> (Token, [Char])
 number inputString lineNumber = 
   let (numString, rest) = span (\c -> isDigit c || c == '.') inputString
-      numValue = read numString :: Float
-  in (TOKEN NUMBER numString (NUM numValue) lineNumber, rest)
+      (validNumString, dot) = if last numString == '.'
+                                then (init numString, ".")
+                                else (numString, "")
+      numValue = read validNumString :: Float
+  in (TOKEN NUMBER validNumString (NUM numValue) lineNumber, rest ++ dot)
 
 
 -- identifier  - Extracts an identifier from a given "lox-string".
