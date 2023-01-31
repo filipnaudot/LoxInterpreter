@@ -95,6 +95,9 @@ scan (x:xs) lineNumber =
                 else if isAlpha x
                     then let (token, rest) = identifier (x:xs) lineNumber
                         in token : (scan rest lineNumber)
+                else if x == '"'
+                    then let (token, rest) = string xs lineNumber
+                        in token : (scan rest lineNumber)
                 else error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
 
@@ -130,6 +133,23 @@ identifier inputString lineNumber =
     in case Map.lookup charString keywords of
         Just keywordType -> (TOKEN keywordType charString NONE lineNumber, rest)
         Nothing -> (TOKEN IDENTIFIER charString NONE lineNumber, rest)
+
+
+-- string  - Extracts a sub-string from a given "lox-string".
+--               
+-- Input:
+--  [Char] - The "lox-string" containing the sub-string.
+--  Int    - The line number to which the input belongs.
+-- Returns a tuple containing the token
+--         for the sub-string and the remaining "lox-string".
+string :: [Char] -> Int -> (Token, [Char])
+string inputString lineNumber =
+    let (subString, rest) = span (\c -> c /= '"' && c /= '\n') inputString
+    in if (null rest) || (head rest == '\0') then
+        error ("\n\nUnterminated string on line " ++ (show lineNumber) ++ "\n\n")
+    else
+        ((TOKEN STRING subString (STR subString) lineNumber), tail rest)
+    --in ((TOKEN STRING subString (STR subString) lineNumber), tail rest)
 
 
 -- removeComment - Removes a comment from a given string, a comment
