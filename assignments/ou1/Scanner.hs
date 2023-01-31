@@ -96,8 +96,8 @@ scan (x:xs) lineNumber =
                     then let (token, rest) = identifier (x:xs) lineNumber
                         in token : (scan rest lineNumber)
                 else if x == '"'
-                    then let (token, rest) = string xs lineNumber
-                        in token : (scan rest lineNumber)
+                    then let (token, rest, lineNum) = string xs lineNumber
+                        in token : (scan rest lineNum)
                 else error ("\n\nUnexpected character at line " ++ (show lineNumber) ++ ": " ++ [x] ++ "\n\n")
 
 
@@ -142,14 +142,15 @@ identifier inputString lineNumber =
 --  Int    - The line number to which the input belongs.
 -- Returns a tuple containing the token
 --         for the sub-string and the remaining "lox-string".
-string :: [Char] -> Int -> (Token, [Char])
+string :: [Char] -> Int -> (Token, [Char], Int)
 string inputString lineNumber =
-    let (subString, rest) = span (\c -> c /= '"' && c /= '\n') inputString
+    let (subString, rest) = span (\c -> c /= '"') inputString
+        lineNum = lineNumber + length (filter (== '\n') subString)
+
     in if (null rest) || (head rest == '\0') then
         error ("\n\nUnterminated string on line " ++ (show lineNumber) ++ "\n\n")
     else
-        ((TOKEN STRING subString (STR subString) lineNumber), tail rest)
-    --in ((TOKEN STRING subString (STR subString) lineNumber), tail rest)
+        ((TOKEN STRING subString (STR subString) lineNumber), tail rest, lineNum)
 
 
 -- removeComment - Removes a comment from a given string, a comment
