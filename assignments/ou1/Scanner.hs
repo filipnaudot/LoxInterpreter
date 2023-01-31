@@ -92,7 +92,7 @@ scan (x:xs) lineNumber =
         _   -> if isDigit x
                 then let (token, rest) = number (x:xs) lineNumber
                     in token : (scan rest lineNumber)
-                else if isAlpha x
+                else if isValidAlpha x
                     then let (token, rest) = identifier (x:xs) lineNumber
                         in token : (scan rest lineNumber)
                 else if x == '"'
@@ -128,7 +128,7 @@ number inputString lineNumber =
 identifier :: [Char] -> Int -> (Token, [Char])
 identifier inputString lineNumber = 
      -- Check for alphanumeric identifier
-    let (charString, rest) = span (\c -> isDigit c || isAlpha c) inputString
+    let (charString, rest) = span (\c -> isDigit c || isAlpha c || c == '_') inputString
     -- Check if it is a keyword or IDENTIFIER
     in case Map.lookup charString keywords of
         Just keywordType -> (TOKEN keywordType charString NONE lineNumber, rest)
@@ -170,6 +170,17 @@ removeComment (x:xs)
 
 isKeyword :: String -> Bool
 isKeyword keyword = Map.member keyword keywords
+
+
+-- isValidAlpha - Checks if a given character is a valid character in
+--                the scope of this program.
+--
+-- Input:
+--  Char        - The character to inspect.
+-- Returns True if valid character, else false
+isValidAlpha :: Char -> Bool
+isValidAlpha character = 
+    isAlpha character || character == '_'
 
 
 -- isWhiteSpace - Checks if a given character is a white-space.
