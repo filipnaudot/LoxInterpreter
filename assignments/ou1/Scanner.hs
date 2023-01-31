@@ -7,7 +7,7 @@ import Tokens           -- Import data types.
 import Debug.Trace      -- For debug prints.
 
 
--- Define a global keyword-map
+-- Define a global keyword-map.
 keywords = Map.fromList [
                         ("and",    AND),
                         ("class",  CLASS),
@@ -167,8 +167,12 @@ removeComment (x:xs)
     | otherwise = removeComment xs
 
 
-
-isKeyword :: String -> Bool
+-- isKeyword    - Checks if a given character is a valid keyword.
+--
+-- Input:
+--  [Char]      - The string containing the keyword.
+-- Returns True if valid keyword, else false.
+isKeyword :: [Char] -> Bool
 isKeyword keyword = Map.member keyword keywords
 
 
@@ -177,7 +181,7 @@ isKeyword keyword = Map.member keyword keywords
 --
 -- Input:
 --  Char        - The character to inspect.
--- Returns True if valid character, else false
+-- Returns True if valid character, else false.
 isValidAlpha :: Char -> Bool
 isValidAlpha character = 
     isAlpha character || character == '_'
@@ -187,6 +191,6 @@ isValidAlpha character =
 --
 -- Input:
 --  Char        - The character to inspect.
--- Returns True if white-space, else false
+-- Returns True if white-space, else false.
 isWhiteSpace :: Char -> Bool
 isWhiteSpace character = character `elem` [' ', '\r', '\t', '\n']
