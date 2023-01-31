@@ -140,8 +140,10 @@ identifier inputString lineNumber =
 -- Input:
 --  [Char] - The "lox-string" containing the sub-string.
 --  Int    - The line number to which the input belongs.
--- Returns a tuple containing the token
---         for the sub-string and the remaining "lox-string".
+-- Returns a tuple of 3 values containing the token
+--         for the sub-string, the remaining "lox-string" and
+--         the updated line number, taking into account any newline
+--         characters within the sub-string.
 string :: [Char] -> Int -> (Token, [Char], Int)
 string inputString lineNumber =
     let (subString, rest) = span (\c -> c /= '"') inputString
