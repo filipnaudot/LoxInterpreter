@@ -1,11 +1,30 @@
 module Scanner (scanTokens) where
 
+import qualified Data.Map as Map
 import Data.Maybe
 import Data.Char
 import Tokens           -- Import data types.
 import Debug.Trace      -- For debug prints.
 
 
+-- Define a global keyword-map
+keywords = Map.fromList [
+                        ("and",    AND),
+                        ("class",  CLASS),
+                        ("else",   ELSE),
+                        ("false",  FALSE),
+                        ("for",    FOR),
+                        ("fun",    FUN),
+                        ("if",     IF),
+                        ("nil",    NIL),
+                        ("or",     OR),
+                        ("print",  PRINT),
+                        ("return", RETURN),
+                        ("super",  SUPER),
+                        ("this",   THIS),
+                        ("true",   TRUE),
+                        ("var",    VAR),
+                        ("while",  WHILE)]
 
 
 -- scanTokens - Initialize the scanning by running
@@ -97,7 +116,7 @@ number inputString lineNumber =
 
 
 -- identifier  - Extracts an identifier from a given "lox-string".
---
+--               
 -- Input:
 --  [Char] - The "lox-string" containing the identifier.
 --  Int    - The line number to which the input belongs.
@@ -105,9 +124,12 @@ number inputString lineNumber =
 --         for the identifier and the remaining "lox-string".
 identifier :: [Char] -> Int -> (Token, [Char])
 identifier inputString lineNumber = 
-  let (charString, rest) = span isAlpha inputString
-  in (TOKEN IDENTIFIER charString (ID charString) lineNumber, rest)
-
+     -- Check for alphanumeric identifier
+    let (charString, rest) = span (\c -> isDigit c || isAlpha c) inputString
+    -- Check if it is a keyword or IDENTIFIER
+    in case Map.lookup charString keywords of
+        Just keywordType -> (TOKEN keywordType charString NONE lineNumber, rest)
+        Nothing -> (TOKEN IDENTIFIER charString NONE lineNumber, rest)
 
 
 -- removeComment - Removes a comment from a given string, a comment
@@ -120,6 +142,11 @@ removeComment "" = ""
 removeComment (x:xs)
     | x == '\n' = xs
     | otherwise = removeComment xs
+
+
+
+isKeyword :: String -> Bool
+isKeyword keyword = Map.member keyword keywords
 
 
 -- isWhiteSpace - Checks if a given character is a white-space.
