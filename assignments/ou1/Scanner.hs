@@ -5,6 +5,7 @@ import Data.Maybe
 import Data.Char
 import Tokens           -- Import data types.
 import Debug.Trace      -- For debug prints.
+import TestStrings      -- Predefined strings for testing
 
 
 -- Define a global keyword-map.
