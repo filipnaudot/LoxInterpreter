@@ -128,7 +128,7 @@ number inputString lineNumber =
 identifier :: [Char] -> Int -> (Token, [Char])
 identifier inputString lineNumber = 
      -- Check for alphanumeric identifier
-    let (charString, rest) = span (\c -> isDigit c || isAlpha c || c == '_') inputString
+    let (charString, rest) = span (\c -> isDigit c || isValidAlpha c) inputString
     -- Check if it is a keyword or IDENTIFIER
     in case Map.lookup charString keywords of
         Just keywordType -> (TOKEN keywordType charString NONE lineNumber, rest)
