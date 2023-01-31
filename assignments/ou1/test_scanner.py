@@ -1,0 +1,94 @@
+import subprocess
+
+
+expected_output = [
+    "TOKEN IDENTIFIER \"andy\" NONE 1",
+    "TOKEN IDENTIFIER \"formless\" NONE 1",
+    "TOKEN IDENTIFIER \"fo\" NONE 1",
+    "TOKEN IDENTIFIER \"_\" NONE 1",
+    "TOKEN IDENTIFIER \"_123\" NONE 1",
+    "TOKEN IDENTIFIER \"_abc\" NONE 1",
+    "TOKEN IDENTIFIER \"ab123\" NONE 1",
+    "TOKEN IDENTIFIER \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\" NONE 1",
+    "TOKEN EOF \"\" NONE 1",
+    "TOKEN AND \"and\" NONE 1",
+    "TOKEN CLASS \"class\" NONE 1",
+    "TOKEN ELSE \"else\" NONE 1",
+    "TOKEN FALSE \"false\" NONE 1",
+    "TOKEN FOR \"for\" NONE 1",
+    "TOKEN FUN \"fun\" NONE 1",
+    "TOKEN IF \"if\" NONE 1",
+    "TOKEN NIL \"nil\" NONE 1",
+    "TOKEN OR \"or\" NONE 1",
+    "TOKEN RETURN \"return\" NONE 1",
+    "TOKEN SUPER \"super\" NONE 1",
+    "TOKEN THIS \"this\" NONE 1",
+    "TOKEN TRUE \"true\" NONE 1",
+    "TOKEN VAR \"var\" NONE 1",
+    "TOKEN WHILE \"while\" NONE 1",
+    "TOKEN EOF \"\" NONE 1",
+    "TOKEN NUMBER \"123\" (NUM 123.0) 1",
+    "TOKEN NUMBER \"123.456\" (NUM 123.456) 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN NUMBER \"456\" (NUM 456.0) 1",
+    "TOKEN NUMBER \"123\" (NUM 123.0) 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN EOF \"\" NONE 1",
+    "TOKEN LEFT_PAREN \"(\" NONE 1",
+    "TOKEN RIGHT_PAREN \")\" NONE 1",
+    "TOKEN LEFT_BRACE \"{\" NONE 1",
+    "TOKEN RIGHT_BRACE \"}\" NONE 1",
+    "TOKEN SEMICOLON \";\" NONE 1",
+    "TOKEN COMMA \",\" NONE 1",
+    "TOKEN PLUS \"+\" NONE 1",
+    "TOKEN MINUS \"-\" NONE 1",
+    "TOKEN STAR \"*\" NONE 1",
+    "TOKEN BANG_EQUAL \"!=\" NONE 1",
+    "TOKEN EQUAL_EQUAL \"==\" NONE 1",
+    "TOKEN LESS_EQUAL \"<=\" NONE 1",
+    "TOKEN GREATER_EQUAL \">=\" NONE 1",
+    "TOKEN BANG_EQUAL \"!=\" NONE 1",
+    "TOKEN LESS \"<\" NONE 1",
+    "TOKEN GREATER \">\" NONE 1",
+    "TOKEN SLASH \"/\" NONE 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN EOF \"\" NONE 1",
+    "TOKEN STRING \"string\" (STR \"string\") 1",
+    "TOKEN STRING \"second row \\n third row\" (STR \"second row \\n third row\") 2",
+    "TOKEN EOF \"\" NONE 3"]
+
+
+def run_tests():
+    # Run Tester and capture output
+    result = subprocess.run(["runhaskell", "Tester.hs"], capture_output=True, text=True)
+    output = result.stdout
+    error = result.stderr
+    
+    # Print the output and error
+    #print(output)
+    print(error, end='')
+
+    return output
+
+
+
+
+
+if __name__ == "__main__":
+    # Get output lines from test
+    output_lines = run_tests().splitlines()
+
+    # Validate output
+    num_errors = 0
+    num_passing = 0
+    i = 0
+    for expected_line in expected_output:
+        if output_lines[i] != expected_line:
+            print("(ERROR)\nGot: " + str(output_lines[i]) + "\nExpected: " + str(expected_line))
+            num_errors = num_errors + 1
+        else:
+            print("(PASSED) Output: " + str(output_lines[i]))
+            num_passing = num_passing + 1
+        i = i + 1
+
+    print("\n\n" + str(num_passing) + " tests passed.\n" + str(num_errors) + " tests failed.\n")
