@@ -71,7 +71,22 @@ def run_tests():
     return output
 
 
+def print_red(input_string):
+    """ print_red - print a given string to the
+        in red without a new line.
+        
+        @param input_string The string to print in red
+    """
+    print("\033[91m {}\033[00m".format(input_string), end = '')
+ 
+ 
+def print_green(input_string):
+    """ print_green - print a given string to the
+        in green without a new line.
 
+        @param input_string The string to print in green
+    """
+    print("\033[92m {}\033[00m" .format(input_string), end = '')
 
 
 if __name__ == "__main__":
@@ -84,10 +99,12 @@ if __name__ == "__main__":
     i = 0
     for expected_line in expected_output:
         if output_lines[i] != expected_line:
-            print("(ERROR)\nGot: " + str(output_lines[i]) + "\nExpected: " + str(expected_line))
+            print_red("ERROR")
+            print("  Got: " + str(output_lines[i]) + "\nExpected: " + str(expected_line))
             num_errors = num_errors + 1
         else:
-            print("(PASSED) Output: " + str(output_lines[i]))
+            print_green("PASSED")
+            print(" Output: " + str(output_lines[i]))
             num_passing = num_passing + 1
         i = i + 1
 
