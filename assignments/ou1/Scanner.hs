@@ -110,12 +110,17 @@ scan (x:xs) lineNumber =
 --         for the Float number and the remaining "lox-string".
 number :: [Char] -> Int -> (Token, [Char])
 number inputString lineNumber = 
-  let (numString, rest) = span (\c -> isDigit c || c == '.') inputString
-      (validNumString, dot) = if last numString == '.'
-                                then (init numString, ".")
-                                else (numString, "")
-      numValue = read validNumString :: Float
-  in (TOKEN NUMBER validNumString (NUM numValue) lineNumber, rest ++ dot)
+    let (numString, rest) = span (\c -> isDigit c) inputString
+        (numStringWithDot, restAfterDot) = if not (null rest) && (head rest) == '.'
+                            then let (numString2, rest2) = span (\c -> isDigit c) (tail rest)
+                                 in if null numString2
+                                    then (numString, rest)
+                                    else (numString ++ "." ++ numString2, dropWhile (== '.') rest2)
+                            else (numString, rest)
+        numValue = read numStringWithDot :: Float
+    in (TOKEN NUMBER numStringWithDot (NUM numValue) lineNumber, restAfterDot)
+
+
 
 
 -- identifier  - Extracts an identifier from a given "lox-string".
