@@ -114,14 +114,11 @@ def print_green(input_string):
 
 
 if __name__ == "__main__":
-    # Get output lines from test
-    #output_lines = run_tests().splitlines()
-
-    # Validate output
-    num_errors = 0
-    num_passing = 0
     for test in tests:
+        num_errors = 0
+        num_passing = 0
         i = 0
+
         output_lines = run_test(test[TEST_NAME_INDEX]).splitlines()
 
         for expected_line in test[EXPECTED_OUTPUT_INDEX]:
@@ -133,39 +130,9 @@ if __name__ == "__main__":
                 num_passing = num_passing + 1
             i = i + 1
         
-        print_green("PASSED ")
-        print(test[TEST_NAME_INDEX])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    """
-    for expected_line in expected_output:
-        if output_lines[i] != expected_line:
-            print_red("ERROR")
-            print("  Got: " + str(output_lines[i]) + "\nExpected: " + str(expected_line))
-            num_errors = num_errors + 1
+        if num_errors == 0:
+            print_green("PASSED ")
+            print(test[TEST_NAME_INDEX])
         else:
-            print_green("PASSED")
-            print(" Output: " + str(output_lines[i]))
-            num_passing = num_passing + 1
-        i = i + 1
-
-    print("\n\n" + str(num_passing) + " tests passed.\n" + str(num_errors) + " tests failed.\n")
-    """
+            print_red("FAILD ")
+            print(test[TEST_NAME_INDEX])
