@@ -168,15 +168,6 @@ removeComment (x:xs)
     | otherwise = removeComment xs
 
 
--- isKeyword    - Checks if a given character is a valid keyword.
---
--- Input:
---  [Char]      - The string containing the keyword.
--- Returns True if valid keyword, else false.
-isKeyword :: [Char] -> Bool
-isKeyword keyword = Map.member keyword keywords
-
-
 -- isValidAlpha - Checks if a given character is a valid character in
 --                the scope of this program.
 --
@@ -186,12 +177,3 @@ isKeyword keyword = Map.member keyword keywords
 isValidAlpha :: Char -> Bool
 isValidAlpha character = 
     isAlpha character || character == '_'
-
-
--- isWhiteSpace - Checks if a given character is a white-space.
---
--- Input:
---  Char        - The character to inspect.
--- Returns True if white-space, else false.
-isWhiteSpace :: Char -> Bool
-isWhiteSpace character = character `elem` [' ', '\r', '\t', '\n']
