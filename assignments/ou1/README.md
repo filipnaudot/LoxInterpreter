@@ -89,3 +89,15 @@ The `Token` data type represents the tokens that the scanner produces and which 
 
 ## Program overview
 The `scanTokens` function uses the `scan` function to scan the input string character by character, and uses a case statement to identify and handle different types of characters. For example, when it encounters an open parenthesis, it creates a new `Token` with `TokenType` `LEFT_PAREN`, `String` representation `"("`, `Literal` value `NONE`, and the current line number.
+
+
+<br/>
+<br/>
+<br/>
+
+## How to test
+The tests for this project are located in the `tests/` folder. Each test has its own `.hs` file that gets executes by the `test_scanner.py` test script. To run the tests simply exucute:
+
+```bash
+python3 test_scanner.py
+```
