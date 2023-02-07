@@ -4,6 +4,31 @@ This is a Lox lexer, a module that takes in a stream of characters and converts 
 
 The main function of this module is `scanTokens`, which takes a list of characters and returns a list of `Token`s.
 
+## How to build and run
+The first step is to start `ghco` by running the following command: 
+```bash
+ghci
+```
+
+Now load the Scanner module with:
+```bash
+:l Scanner.hs
+```
+
+The Scanner should now be ready to use. For example:
+```bash
+scanTokens "let i = 0"
+```
+should produce the following output:
+
+```bash
+[TOKEN IDENTIFIER "let" (ID "let") 1,TOKEN IDENTIFIER "i" (ID "i") 1,
+TOKEN EQUAL "=" NONE 1,
+TOKEN NUMBER "0" (NUM 0.0) 1,
+TOKEN EOF "" NONE 1]
+```
+The formating might look diffrent in your teminal but the values should be the same.
+
 ## TokenType
 
 The `TokenType` data type is used to assign a type to each token that is created by the lexer. The `TokenType` data type is defined as an enumeration of all the different types of tokens that can be found in the input code. These types include:
@@ -64,5 +89,3 @@ The `Token` data type represents the tokens that the scanner produces and which 
 
 ## Program overview
 The `scanTokens` function uses the `scan` function to scan the input string character by character, and uses a case statement to identify and handle different types of characters. For example, when it encounters an open parenthesis, it creates a new `Token` with `TokenType` `LEFT_PAREN`, `String` representation `"("`, `Literal` value `NONE`, and the current line number.
-
-The `scan` function is a helper function that takes two arguments, the input string and the current line number. It scans the input string one character at a time, and creates a new token for each character it encounters. It uses the `case` statement to match different characters to different token types.
