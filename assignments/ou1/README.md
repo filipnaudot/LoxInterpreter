@@ -5,7 +5,7 @@ This is a Lox lexer, a module that takes in a stream of characters and converts 
 The main function of this module is `scanTokens`, which takes a list of characters and returns a list of `Token`s.
 
 ## How to build and run
-The first step is to start `ghco` by running the following command: 
+The first step is to start `ghci` by running the following command: 
 ```bash
 ghci
 ```
