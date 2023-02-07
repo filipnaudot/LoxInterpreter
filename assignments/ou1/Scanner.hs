@@ -9,22 +9,22 @@ import Debug.Trace      -- For debug prints.
 
 -- Define a global keyword-map.
 keywords = Map.fromList [
-                        ("and",    AND),
-                        ("class",  CLASS),
-                        ("else",   ELSE),
-                        ("false",  FALSE),
-                        ("for",    FOR),
-                        ("fun",    FUN),
-                        ("if",     IF),
-                        ("nil",    NIL),
-                        ("or",     OR),
-                        ("print",  PRINT),
-                        ("return", RETURN),
-                        ("super",  SUPER),
-                        ("this",   THIS),
-                        ("true",   TRUE),
-                        ("var",    VAR),
-                        ("while",  WHILE)]
+                        ("and",    (AND, NONE)),
+                        ("class",  (CLASS, NONE)),
+                        ("else",   (ELSE, NONE)),
+                        ("false",  (FALSE, FALSE_LIT)),
+                        ("for",    (FOR, NONE)),
+                        ("fun",    (FUN, NONE)),
+                        ("if",     (IF, NONE)),
+                        ("nil",    (NIL, NIL_LIT)),
+                        ("or",     (OR, NONE)),
+                        ("print",  (PRINT, NONE)),
+                        ("return", (RETURN, NONE)),
+                        ("super",  (SUPER, NONE)),
+                        ("this",   (THIS, NONE)),
+                        ("true",   (TRUE, TRUE_LIT)),
+                        ("var",    (VAR, NONE)),
+                        ("while",  (WHILE, NONE))]
 
 
 -- scanTokens - Initialize the scanning by running
@@ -127,12 +127,13 @@ number inputString lineNumber =
 --         for the identifier and the remaining "lox-string".
 identifier :: [Char] -> Int -> (Token, [Char])
 identifier inputString lineNumber = 
-     -- Check for alphanumeric identifier
+    -- Check for alphanumeric identifier
     let (charString, rest) = span (\c -> isDigit c || isValidAlpha c) inputString
     -- Check if it is a keyword or IDENTIFIER
     in case Map.lookup charString keywords of
-        Just keywordType -> (TOKEN keywordType charString NONE lineNumber, rest)
-        Nothing -> (TOKEN IDENTIFIER charString NONE lineNumber, rest)
+        Just (keywordType, literal) -> (TOKEN keywordType charString literal lineNumber, rest)
+        Nothing -> (TOKEN IDENTIFIER charString (ID charString) lineNumber, rest)
+
 
 
 -- string  - Extracts a sub-string from a given "lox-string".
