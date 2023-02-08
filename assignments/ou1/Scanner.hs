@@ -6,6 +6,14 @@ import Data.Char
 import Tokens           -- Import data types.
 import Debug.Trace      -- For debug prints.
 
+--
+-- Lox scanner/lexer.
+--
+-- Author: Filip Naudot (ens19fpt@cs.umu.se)
+--
+-- Version information:
+--   2023-02-08: v1.0
+--
 
 -- Define a global keyword-map.
 keywords = Map.fromList [
