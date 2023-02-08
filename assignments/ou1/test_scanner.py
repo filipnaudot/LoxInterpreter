@@ -45,6 +45,20 @@ test_numbers_expected_output = [
     "TOKEN EOF \"\" NONE 1"
 ]
 
+test_weird_numbers_expected_output = [
+    "TOKEN NUMBER \"1.1\" (NUM 1.1) 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN NUMBER \"1\" (NUM 1.0) 1",
+    "TOKEN NUMBER \"1\" (NUM 1.0) 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN NUMBER \"1\" (NUM 1.0) 1",
+    "TOKEN NUMBER \"11\" (NUM 11.0) 1",
+    "TOKEN DOT \".\" NONE 1",
+    "TOKEN EOF \"\" NONE 1"
+]
+
 test_punctuators_expected_output = [
     "TOKEN LEFT_PAREN \"(\" NONE 1",
     "TOKEN RIGHT_PAREN \")\" NONE 1",
@@ -77,6 +91,7 @@ test_strings_expected_output = [
 tests = [("TestIdentifiers.hs", test_identifiers_expected_output),
          ("TestKeywords.hs" , test_keywords_expected_output),
          ("TestNumbers.hs" , test_numbers_expected_output),
+         ("TestWeirdNumbers.hs" , test_weird_numbers_expected_output),
          ("TestPunctuators.hs" , test_punctuators_expected_output),
          ("TestStrings.hs" , test_strings_expected_output)]
 

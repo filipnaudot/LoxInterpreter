@@ -115,7 +115,7 @@ number inputString lineNumber =
                             then let (numString2, rest2) = span (\c -> isDigit c) (tail rest)
                                  in if null numString2
                                     then (numString, rest)
-                                    else (numString ++ "." ++ numString2, dropWhile (== '.') rest2)
+                                    else (numString ++ "." ++ numString2, rest2)
                             else (numString, rest)
         numValue = read numStringWithDot :: Float
     in (TOKEN NUMBER numStringWithDot (NUM numValue) lineNumber, restAfterDot)
