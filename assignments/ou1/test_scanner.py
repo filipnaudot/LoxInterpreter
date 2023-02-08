@@ -98,7 +98,12 @@ tests = [("TestIdentifiers.hs", test_identifiers_expected_output),
 
 
 def run_test(test_name):
-    # Run Tester and capture output
+    """ run_test - Runs a given test in a subprocess and
+                   captures the output.
+        
+        @param test_name The name of test test file.
+    """
+    # Run test and capture output
     result = subprocess.run(["runhaskell", "./tests/" + str(test_name)], capture_output=True, text=True)
     output = result.stdout
     error = result.stderr
@@ -111,19 +116,19 @@ def run_test(test_name):
 
 
 def print_red(input_string):
-    """ print_red - print a given string to the
+    """ print_red - Print a given string to the terminal
         in red without a new line.
         
-        @param input_string The string to print in red
+        @param input_string The string to print in red.
     """
     print("\033[91m {}\033[00m".format(input_string), end = '')
  
  
 def print_green(input_string):
-    """ print_green - print a given string to the
+    """ print_green - Print a given string to the terminal
         in green without a new line.
 
-        @param input_string The string to print in green
+        @param input_string The string to print in green.
     """
     print("\033[92m {}\033[00m" .format(input_string), end = '')
 
