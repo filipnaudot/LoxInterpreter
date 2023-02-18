@@ -1,4 +1,4 @@
-module Parser (buildExpr) where
+module Parser (parse) where
 
 import qualified Data.Map as Map
 import Data.Maybe
@@ -27,8 +27,35 @@ data Expr
 
 
 
+---------------------------------------------------------
+------------------------ Main ---------------------------
+---------------------------------------------------------
+parse :: [Token] -> (Expr, [Token])
+parse tokens = buildExpr tokens
+
+
+
+
+
+---------------------------------------------------------
+---------------------- Fuctions -------------------------
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------
+---------------------- Expression -----------------------
+---------------------------------------------------------
 buildExpr :: [Token] -> (Expr, [Token])
 buildExpr tokens = buildAssignment tokens
+
 
 
 buildAssignment :: [Token] -> (Expr, [Token])
