@@ -39,7 +39,7 @@ buildAssignment (token:tokens) =
       case tokens of
         (TOKEN EQUAL _ _ _) : restTokens1 ->
           let (valueExpr, restTokens2) = buildAssignment restTokens1
-          in trace ("here EQUAL") (Assignment strValue valueExpr, restTokens2)
+          in (Assignment strValue valueExpr, restTokens2)
     _ -> buildLogicalOr (token:tokens)
 
 
