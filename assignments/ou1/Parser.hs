@@ -19,7 +19,7 @@ data Declaration = VariableDecl Literal (Maybe Expr) | Statement Stmt deriving (
 -- Datatype for representing a Lox statement
 data Stmt = ExprStmt Expr
            | PrintStmt Expr
-           | BlockStmt [Stmt]
+           | BlockStmt [Declaration]
            | IfStmt Expr Stmt (Maybe Stmt)
            | WhileStmt Expr Stmt
            | ForStmt (Maybe Stmt) (Maybe Expr) (Maybe Expr) Stmt
@@ -70,17 +70,9 @@ parse (token:tokens) =
 buildDecl :: [Token] -> (Declaration, [Token])
 buildDecl (token:tokens) = 
   case token of
-    (TOKEN VAR varName _ _) -> let (variableDecl, rest) = buildVariableDecl (token:tokens)
-                               in (variableDecl, rest)
-    _ -> error "Expected a declaration"
-
-
-
-
----------------------------------------------------------
------------------------ Statement -----------------------
----------------------------------------------------------
--- Parse a Lox statement from a list of tokens
+    (TOKEN VAR _ _ _) -> buildVariableDecl (tokens)
+    _ -> let (stmt, rest') = buildStatement (token:tokens)
+         in (Statement stmt, rest')
 
 
 
@@ -89,7 +81,7 @@ buildDecl (token:tokens) =
 ---------------------------------------------------------
 -- Parse a Lox variable declaration from a list of tokens
 buildVariableDecl :: [Token] -> (Declaration, [Token])
-buildVariableDecl toks@(TOKEN VAR _ _ _ : TOKEN IDENTIFIER _ (ID idStr) _ : tokens) =
+buildVariableDecl toks@(TOKEN IDENTIFIER _ (ID idStr) _ : tokens) =
   case tokens of
     TOKEN SEMICOLON _ _ _ : rest1 -> (VariableDecl (ID idStr) Nothing, rest1)
     TOKEN EQUAL _ _ _ : exprTokens -> let (expr, rest) = buildExpr exprTokens
@@ -102,10 +94,31 @@ buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
 
 
 ---------------------------------------------------------
+----------------------- Statement -----------------------
+---------------------------------------------------------
+-- Parse a Lox statement from a list of tokens
+buildStatement :: [Token] -> (Stmt, [Token])
+buildStatement (token:tokens) = 
+  case token of
+    (TOKEN PRINT _ _ _) -> let (printStatement, rest) = buildPrintStatement (token:tokens)
+                           in (printStatement, rest)
+    _ -> let (exprStmt, rest') = buildExpr (token:tokens)
+         in case rest' of
+            TOKEN SEMICOLON _ _ _ : rest'' -> (ExprStmt exprStmt, rest'')
+            _ -> error "Expected semicolon after expression statement"
+
+
+
+---------------------------------------------------------
 -------------------- Print statement --------------------
 ---------------------------------------------------------
 -- Parse a Lox print statement from a list of tokens
-
+buildPrintStatement :: [Token] -> (Stmt, [Token])
+buildPrintStatement (token:tokens) = 
+  let (printStmt, rest) = buildExpr tokens
+  in case rest of
+    TOKEN SEMICOLON _ _ _ : rest' -> (PrintStmt printStmt, rest')
+    _ -> error "Expected semicolon after print statement"
 
 
 
@@ -113,6 +126,10 @@ buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
 -------------------- Block statement --------------------
 ---------------------------------------------------------
 -- Parse a Lox block statement from a list of tokens
+
+
+
+
 
 
 
@@ -139,6 +156,7 @@ buildAssignment (token:tokens) =
         (TOKEN EQUAL _ _ _) : restTokens1 ->
           let (valueExpr, restTokens2) = buildAssignment restTokens1
           in (Assignment strValue valueExpr, restTokens2)
+        _ -> buildLogicalOr (token:tokens)
     _ -> buildLogicalOr (token:tokens)
 
 
