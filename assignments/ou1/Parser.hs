@@ -108,6 +108,12 @@ buildStatement (token:tokens) =
             _ -> error "Expected semicolon after expression statement"
 
 
+---------------------------------------------------------
+---------------------- if statement ---------------------
+---------------------------------------------------------
+
+
+
 
 ---------------------------------------------------------
 -------------------- Print statement --------------------
@@ -119,6 +125,13 @@ buildPrintStatement (token:tokens) =
   in case rest of
     TOKEN SEMICOLON _ _ _ : rest' -> (PrintStmt printStmt, rest')
     _ -> error "Expected semicolon after print statement"
+
+
+
+
+---------------------------------------------------------
+-------------------- Return statement -------------------
+---------------------------------------------------------
 
 
 
