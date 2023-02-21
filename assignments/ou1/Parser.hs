@@ -11,7 +11,7 @@ import Tokens           -- Import data types.
 
 
 -- Datatype for representing a Lox program
-data Program = Program [Declaration] deriving (Show)
+data Program = PROGRAM [Declaration] deriving (Show)
 
 -- Datatype for representing a Lox declaration
 data Declaration = VariableDecl Literal (Maybe Expr) | Statement Stmt deriving (Show)
@@ -53,12 +53,15 @@ data Expr
 ---------------------------------------------------------
 
 -- Parse a Lox program from a list of tokens
-parse :: [Token] -> [Declaration]
-parse (token:tokens) = 
-  let (statement, rest) = buildDecl (token:tokens)
-  in case rest of
-    (TOKEN EOF _ _ _) : rest -> [statement]
-    _ -> error "-----------------  Parse error  -----------------"
+parse :: [Token] -> Program
+parse tokens = PROGRAM (buildDecls tokens)
+
+--parse :: [Token] -> [Declaration]
+--parse (token:tokens) = 
+--  let (statement, rest) = buildDecl (token:tokens)
+--  in case rest of
+--    (TOKEN EOF _ _ _) : rest -> [statement]
+--    _ -> error "-----------------  Parse error  -----------------"
 
 
 
@@ -66,6 +69,15 @@ parse (token:tokens) =
 ---------------------------------------------------------
 --------------------- Declaration -----------------------
 ---------------------------------------------------------
+
+-- Parse a list of Lox declarations from a list of tokens
+buildDecls :: [Token] -> [Declaration]
+buildDecls (TOKEN EOF _ _ _ : _) = []
+buildDecls tokens = let (decl, rest) = buildDecl tokens
+                    in decl : buildDecls rest
+
+
+
 -- Parse a Lox declaration from a list of tokens
 buildDecl :: [Token] -> (Declaration, [Token])
 buildDecl (token:tokens) = 
@@ -73,7 +85,6 @@ buildDecl (token:tokens) =
     (TOKEN VAR _ _ _) -> buildVariableDecl (tokens)
     _ -> let (stmt, rest') = buildStatement (token:tokens)
          in (Statement stmt, rest')
-
 
 
 ---------------------------------------------------------
@@ -90,7 +101,6 @@ buildVariableDecl toks@(TOKEN IDENTIFIER _ (ID idStr) _ : tokens) =
                                         _ -> error "Expected semicolon after variable declaration"
     _ -> error "Expected semicolon or equals sign after variable identifier"
 buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
-
 
 
 ---------------------------------------------------------
@@ -124,6 +134,7 @@ buildIfStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
 
 buildIfStatement _ = error "Expected 'if' keyword followed by '('"
 
+
 ---------------------------------------------------------
 -------------------- Print statement --------------------
 ---------------------------------------------------------
@@ -134,8 +145,6 @@ buildPrintStatement (token:tokens) =
   in case rest of
     TOKEN SEMICOLON _ _ _ : rest' -> (PrintStmt printStmt, rest')
     _ -> error "Expected semicolon after print statement"
-
-
 
 
 ---------------------------------------------------------
@@ -151,7 +160,6 @@ buildReturnStatement toks@(token:tokens) =
   in case rest of
     (TOKEN SEMICOLON _ _ _) : rest' -> (ReturnStmt maybeExpr, rest')
     _ -> error "Expected semicolon after return statement"
-
 
 
 ---------------------------------------------------------
@@ -192,7 +200,6 @@ buildExpr :: [Token] -> (Expr, [Token])
 buildExpr tokens = buildAssignment tokens
 
 
-
 buildAssignment :: [Token] -> (Expr, [Token])
 buildAssignment (token:tokens) =
   case token of
@@ -206,7 +213,6 @@ buildAssignment (token:tokens) =
     _ -> buildLogicalOr (token:tokens)
 
 
-
 buildLogicalOr :: [Token] -> (Expr, [Token])
 buildLogicalOr tokens =
   let (leftExpr, restTokens) = buildLogicalAnd tokens
@@ -215,7 +221,6 @@ buildLogicalOr tokens =
                                       in (LogicalOr leftExpr rightExpr, restTokens2)
     _ -> (leftExpr, restTokens)
        
-
 
 buildLogicalAnd :: [Token] -> (Expr, [Token])
 buildLogicalAnd tokens = 
@@ -227,7 +232,6 @@ buildLogicalAnd tokens =
     _ -> (left, restTokens)
 
 
-
 buildEquality :: [Token] -> (Expr, [Token])
 buildEquality tokens =
   let (leftExpr, restTokens) = buildComparison tokens
@@ -237,7 +241,6 @@ buildEquality tokens =
        (TOKEN EQUAL_EQUAL strEqualEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildComparison restTokens1
                                                               in (Equality leftExpr strEqualEqual rightExpr, restTokens2)
        _ -> (leftExpr, restTokens)
-
 
 
 buildComparison :: [Token] -> (Expr, [Token])
@@ -260,7 +263,6 @@ buildComparison tokens =
        _ -> (leftExpr, restTokens)
                                           
 
-
 buildTerm :: [Token] -> (Expr, [Token])
 buildTerm tokens =
   let (leftExpr, restTokens) = buildFactor tokens
@@ -270,7 +272,6 @@ buildTerm tokens =
        (TOKEN PLUS strPlus _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildFactor restTokens1
                                                  in (Term leftExpr strPlus rightExpr, restTokens2)
        _ -> (leftExpr, restTokens)
-
 
 
 buildFactor :: [Token] -> (Expr, [Token])
@@ -284,7 +285,6 @@ buildFactor tokens =
        _ -> (leftExpr, restTokens)
 
 
-
 buildUnary :: [Token] -> (Expr, [Token])
 buildUnary tokens =
   case tokens of
@@ -293,7 +293,6 @@ buildUnary tokens =
     (TOKEN MINUS strMinus _ _) : restTokens1 -> let (unaryExpr, restTokens2) = buildUnary restTokens1
                                               in (Unary strMinus unaryExpr, restTokens2)
     _ -> buildPrimary tokens
-
 
 
 buildPrimary :: [Token] -> (Expr, [Token])
@@ -309,5 +308,3 @@ buildPrimary ((TOKEN LEFT_PAREN _ _ _) : tokens) =
        (TOKEN RIGHT_PAREN _ _ _) : tokenRest2 -> (Grouping expr, tokenRest2)
        _ -> error "Expected ')' after expression in grouping."
 buildPrimary _ = error "Expected expression."
-
-    
