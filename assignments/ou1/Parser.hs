@@ -20,8 +20,8 @@ instance Show Program where
 data Declaration = VariableDecl Literal (Maybe Expr) | Statement Stmt
 
 instance Show Declaration where
-  show (VariableDecl id Nothing) = "V DEC -> " ++ showLit id ++ ";"
-  show (VariableDecl id (Just expr)) = "V DEC -> " ++ showLit id ++ "=" ++ show expr ++ ";"
+  show (VariableDecl id Nothing) = "V DEC -> " ++ showLiteral id ++ ";"
+  show (VariableDecl id (Just expr)) = "V DEC -> " ++ showLiteral id ++ "=" ++ show expr ++ ";"
   show (Statement stmt) = show stmt
 
 
@@ -72,18 +72,20 @@ instance Show Expr where
     show (Term expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
     show (Factor expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
     show (Unary op expr) = op ++ show expr
-    show (Primary lit) = showLit lit
+    show (Primary lit) = showLiteral lit
     show (Grouping expr) = "(" ++ show expr ++ ")"
 
-
-showLit (STR str) = "\"" ++ str ++ "\""
-showLit (NUM num) = show num
-showLit (ID id) = id
-showLit lit = show lit
 ---------------------------------------------------------
 ------------------- Helper functions --------------------
 ---------------------------------------------------------
 -- TODO: Add getLine function
+
+-- Format Literal for show function
+showLiteral (STR str) = "\"" ++ str ++ "\""
+showLiteral (NUM num) = show num
+showLiteral (ID id) = id
+showLiteral literal = show literal
+
 
 ---------------------------------------------------------
 ------------------------ Main ---------------------------
