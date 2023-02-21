@@ -100,8 +100,9 @@ buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
 buildStatement :: [Token] -> (Stmt, [Token])
 buildStatement (token:tokens) = 
   case token of
-    (TOKEN PRINT _ _ _) -> buildPrintStatement (token:tokens)
     (TOKEN IF _ _ _) -> buildIfStatement (tokens)
+    (TOKEN PRINT _ _ _) -> buildPrintStatement (token:tokens)
+    (TOKEN RETURN _ _ _) -> buildReturnStatement (tokens)
     _ -> let (exprStmt, rest') = buildExpr (token:tokens)
          in case rest' of
             TOKEN SEMICOLON _ _ _ : rest'' -> (ExprStmt exprStmt, rest'')
@@ -139,6 +140,19 @@ buildPrintStatement (token:tokens) =
 ---------------------------------------------------------
 -------------------- Return statement -------------------
 ---------------------------------------------------------
+buildReturnStatement :: [Token] -> (Stmt, [Token])
+buildReturnStatement toks@(token:tokens) =
+  let (maybeExpr, rest) =
+        case token of
+          (TOKEN SEMICOLON _ _ _) -> (Nothing, toks) -- return;
+          _ -> let (expr, rest'') = buildExpr toks -- return <expression>;
+               in (Just expr, rest'')
+  in case rest of
+    (TOKEN SEMICOLON _ _ _) : rest' -> (ReturnStmt maybeExpr, rest')
+    _ -> error "Expected semicolon after return statement"
+
+
+
 
 
 
