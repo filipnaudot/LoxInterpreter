@@ -103,6 +103,7 @@ buildStatement (token:tokens) =
     (TOKEN IF _ _ _) -> buildIfStatement (tokens)
     (TOKEN PRINT _ _ _) -> buildPrintStatement (token:tokens)
     (TOKEN RETURN _ _ _) -> buildReturnStatement (tokens)
+    (TOKEN WHILE _ _ _) -> buildWhileStatement (tokens)
     _ -> let (exprStmt, rest') = buildExpr (token:tokens)
          in case rest' of
             TOKEN SEMICOLON _ _ _ : rest'' -> (ExprStmt exprStmt, rest'')
@@ -153,7 +154,18 @@ buildReturnStatement toks@(token:tokens) =
 
 
 
-
+---------------------------------------------------------
+-------------------- While statement -------------------
+---------------------------------------------------------
+-- Parse a Lox while statement from a list of tokens
+buildWhileStatement :: [Token] -> (Stmt, [Token])
+buildWhileStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
+  let (exprStmt, rest) = buildExpr tokens
+  in case rest of
+    TOKEN RIGHT_PAREN _ _ _ : rest' -> let (stmt, rest'') = buildStatement rest'
+                                       in (WhileStmt exprStmt stmt, rest'')
+    _ -> error "Expected ')'"
+buildWhileStatement _ = error "Expected '('  after while statement"
 
 
 ---------------------------------------------------------
