@@ -140,6 +140,7 @@ buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
 -- Parse a Lox statement from a list of tokens
 buildStatement :: [Token] -> (Stmt, [Token])
 buildStatement (token:tokens) = 
+  --trace ("buildStatement: " ++ show (token:tokens)) $ -- trace input tokens list
   case token of
     (TOKEN IF _ _ _) -> buildIfStatement (tokens)
     (TOKEN PRINT _ _ _) -> buildPrintStatement (token:tokens)
@@ -160,11 +161,13 @@ buildIfStatement :: [Token] -> (Stmt, [Token])
 buildIfStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
   let (exprStmt, rest) = buildExpr tokens
   in case rest of
-    TOKEN RIGHT_PAREN _ _ _ : rest' -> let (stmt, rest') = buildStatement tokens
-                                       in (IfStmt exprStmt stmt Nothing, rest')
+    TOKEN RIGHT_PAREN _ _ _ : rest' -> let (ifStmt, rest'') = buildStatement rest'
+                                       in case rest'' of
+                                            (TOKEN ELSE _ _ _) : rest3 -> let (elseStmt, rest4) = buildStatement rest3
+                                                                             in (IfStmt exprStmt ifStmt (Just elseStmt), rest4)
+                                            _ -> (IfStmt exprStmt ifStmt Nothing, rest'')
     _ -> error "Expected ')' after if statement"
-
-buildIfStatement _ = error "Expected 'if' keyword followed by '('"
+buildIfStatement _ = error "Expected 'if' keyword followed by '('"  
 
 
 ---------------------------------------------------------
@@ -218,14 +221,6 @@ buildBlockStatement toks@(token:tokens) =
   in case rest of
     (TOKEN RIGHT_BRACE _ _ _) : rest' -> (BlockStmt subdecl, rest')
     _ -> error "expected '}' after block"
-
-
-
-
-
-
-
-
 
 
 
