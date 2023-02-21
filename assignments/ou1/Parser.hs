@@ -11,10 +11,19 @@ import Tokens           -- Import data types.
 
 
 -- Datatype for representing a Lox program
-data Program = PROGRAM [Declaration] deriving (Show)
+data Program = PROGRAM [Declaration]
+
+instance Show Program where
+  show (PROGRAM decls) = show (length decls) ++ "\n" ++ unlines (map show decls)
 
 -- Datatype for representing a Lox declaration
-data Declaration = VariableDecl Literal (Maybe Expr) | Statement Stmt deriving (Show)
+data Declaration = VariableDecl Literal (Maybe Expr) | Statement Stmt
+
+instance Show Declaration where
+  show (VariableDecl id Nothing) = "V DEC -> " ++ showLit id ++ ";"
+  show (VariableDecl id (Just expr)) = "V DEC -> " ++ showLit id ++ "=" ++ show expr ++ ";"
+  show (Statement stmt) = show stmt
+
 
 -- Datatype for representing a Lox statement
 data Stmt = ExprStmt Expr
@@ -26,7 +35,20 @@ data Stmt = ExprStmt Expr
            | ReturnStmt (Maybe Expr)
            | BreakStmt
            | ContinueStmt
-           deriving (Show)
+
+instance Show Stmt where
+  show (ExprStmt expr) = show expr ++ ";"
+  show (PrintStmt expr) = "print" ++ show expr ++ ";"
+  show (BlockStmt decls) = "{" ++ unwords (map show decls) ++ "}"
+  show (IfStmt condition stmt Nothing) = "if(" ++ show condition ++ ")" ++ show stmt
+  show (IfStmt condition stmt (Just elseStmt)) = "if(" ++ show condition ++ ")" ++ show stmt ++ "else" ++ show elseStmt
+  show (WhileStmt condition stmt) = "while(" ++ show condition ++ ")" ++ show stmt
+  show (ForStmt initializer condition increment stmt) = "for(" ++ show initializer ++ ";" ++ show condition ++ ";" ++ show increment ++ ")" ++ show stmt
+  show (ReturnStmt (Just expr)) = "return" ++ show expr ++ ";"
+  show (ReturnStmt Nothing) = "return;"
+  show BreakStmt = "break;"
+  show ContinueStmt = "continue;"
+
 
 -- Datatype for representing a Lox expression
 data Expr
@@ -40,9 +62,24 @@ data Expr
     | Unary String Expr            -- operator, operand
     | Primary Literal              -- a literal
     | Grouping Expr
-    deriving (Show)
+
+instance Show Expr where
+    show (Assignment id expr) = id ++ "=" ++ show expr
+    show (LogicalOr expr1 expr2) = show expr1 ++ " OR " ++ show expr2
+    show (LogicalAnd expr1 expr2) = show expr1 ++ " AND " ++ show expr2
+    show (Equality expr1 op expr2) = show expr1 ++ op ++ show expr2
+    show (Comparison expr1 op expr2) = show expr1 ++ op ++ show expr2
+    show (Term expr1 op expr2) = show expr1 ++ op ++ show expr2
+    show (Factor expr1 op expr2) = show expr1 ++ op ++ show expr2
+    show (Unary op expr) = op ++ show expr
+    show (Primary lit) = showLit lit
+    show (Grouping expr) = "(" ++ show expr ++ ")"
 
 
+showLit (STR str) = "\"" ++ str ++ "\""
+showLit (NUM num) = show num
+showLit (ID id) = id
+showLit lit = show lit
 ---------------------------------------------------------
 ------------------- Helper functions --------------------
 ---------------------------------------------------------
@@ -180,7 +217,14 @@ buildWhileStatement _ = error "Expected '('  after while statement"
 -------------------- Block statement --------------------
 ---------------------------------------------------------
 -- Parse a Lox block statement from a list of tokens
-
+buildBlockStatement :: [Token] -> (Stmt, [Token])
+buildBlockStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
+  let (exprStmt, rest) = buildExpr tokens
+  in case rest of
+    TOKEN RIGHT_PAREN _ _ _ : rest' -> let (stmt, rest'') = buildStatement rest'
+                                       in (WhileStmt exprStmt stmt, rest'')
+    _ -> error "Expected ')'"
+buildBlockStatement _ = error "Expected '('  after while statement"
 
 
 
@@ -279,9 +323,9 @@ buildFactor tokens =
   let (leftExpr, restTokens) = buildUnary tokens
   in case restTokens of
        (TOKEN SLASH strSlash _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
-                                                 in (Unary strSlash rightExpr, restTokens2)
+                                                   in (Factor leftExpr strSlash rightExpr, restTokens2)
        (TOKEN STAR strStar _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
-                                               in (Unary strStar rightExpr, restTokens2)
+                                                 in (Factor leftExpr strStar rightExpr, restTokens2)
        _ -> (leftExpr, restTokens)
 
 
@@ -289,9 +333,9 @@ buildUnary :: [Token] -> (Expr, [Token])
 buildUnary tokens =
   case tokens of
     (TOKEN BANG strBang _ _) : restTokens1 -> let (unaryExpr, restTokens2) = buildUnary restTokens1
-                                            in (Unary strBang unaryExpr, restTokens2)
+                                              in (Unary strBang unaryExpr, restTokens2)
     (TOKEN MINUS strMinus _ _) : restTokens1 -> let (unaryExpr, restTokens2) = buildUnary restTokens1
-                                              in (Unary strMinus unaryExpr, restTokens2)
+                                                in (Unary strMinus unaryExpr, restTokens2)
     _ -> buildPrimary tokens
 
 
