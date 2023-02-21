@@ -100,8 +100,8 @@ buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
 buildStatement :: [Token] -> (Stmt, [Token])
 buildStatement (token:tokens) = 
   case token of
-    (TOKEN PRINT _ _ _) -> let (printStatement, rest) = buildPrintStatement (token:tokens)
-                           in (printStatement, rest)
+    (TOKEN PRINT _ _ _) -> buildPrintStatement (token:tokens)
+    (TOKEN IF _ _ _) -> buildIfStatement (tokens)
     _ -> let (exprStmt, rest') = buildExpr (token:tokens)
          in case rest' of
             TOKEN SEMICOLON _ _ _ : rest'' -> (ExprStmt exprStmt, rest'')
@@ -111,9 +111,16 @@ buildStatement (token:tokens) =
 ---------------------------------------------------------
 ---------------------- if statement ---------------------
 ---------------------------------------------------------
+-- Parse a Lox if statement from a list of tokens
+buildIfStatement :: [Token] -> (Stmt, [Token])
+buildIfStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
+  let (exprStmt, rest) = buildExpr tokens
+  in case rest of
+    TOKEN RIGHT_PAREN _ _ _ : rest' -> let (stmt, rest') = buildStatement tokens
+                                       in (IfStmt exprStmt stmt Nothing, rest')
+    _ -> error "Expected ')' after if statement"
 
-
-
+buildIfStatement _ = error "Expected 'if' keyword followed by '('"
 
 ---------------------------------------------------------
 -------------------- Print statement --------------------
