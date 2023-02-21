@@ -65,13 +65,13 @@ data Expr
 
 instance Show Expr where
     show (Assignment id expr) = id ++ "=" ++ show expr
-    show (LogicalOr expr1 expr2) = show expr1 ++ " OR " ++ show expr2
-    show (LogicalAnd expr1 expr2) = show expr1 ++ " AND " ++ show expr2
-    show (Equality expr1 op expr2) = show expr1 ++ op ++ show expr2
+    show (LogicalOr expr1 expr2) = show expr1 ++ "OR" ++ show expr2
+    show (LogicalAnd expr1 expr2) = "(" ++ show expr1 ++ "&&" ++ show expr2  ++ ")"
+    show (Equality expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
     show (Comparison expr1 op expr2) = show expr1 ++ op ++ show expr2
     show (Term expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
     show (Factor expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
-    show (Unary op expr) = op ++ show expr
+    show (Unary op expr) = "(" ++ op ++ show expr ++ ")"
     show (Primary lit) = showLiteral lit
     show (Grouping expr) = "(" ++ show expr ++ ")"
 
@@ -90,38 +90,30 @@ showLiteral literal = show literal
 ---------------------------------------------------------
 ------------------------ Main ---------------------------
 ---------------------------------------------------------
-
 -- Parse a Lox program from a list of tokens
 parse :: [Token] -> Program
-parse tokens = PROGRAM (buildDecls tokens)
-
---parse :: [Token] -> [Declaration]
---parse (token:tokens) = 
---  let (statement, rest) = buildDecl (token:tokens)
---  in case rest of
---    (TOKEN EOF _ _ _) : rest -> [statement]
---    _ -> error "-----------------  Parse error  -----------------"
-
-
+parse tokens = let (decls, []) = buildDecls tokens
+               in PROGRAM decls
 
 
 ---------------------------------------------------------
 --------------------- Declaration -----------------------
 ---------------------------------------------------------
-
 -- Parse a list of Lox declarations from a list of tokens
-buildDecls :: [Token] -> [Declaration]
-buildDecls (TOKEN EOF _ _ _ : _) = []
-buildDecls tokens = let (decl, rest) = buildDecl tokens
-                    in decl : buildDecls rest
-
+buildDecls :: [Token] -> ([Declaration], [Token])
+buildDecls (TOKEN EOF _ _ _ : rest) = ([], rest)
+buildDecls toks@(TOKEN RIGHT_BRACE _ _ _ : rest) = ([], toks)
+buildDecls tokens = 
+  let (decl, rest) = buildDecl tokens
+      (decls, tokens') = buildDecls rest
+  in (decl : decls, tokens')
 
 
 -- Parse a Lox declaration from a list of tokens
 buildDecl :: [Token] -> (Declaration, [Token])
 buildDecl (token:tokens) = 
   case token of
-    (TOKEN VAR _ _ _) -> buildVariableDecl (tokens)
+    (TOKEN VAR _ _ _) -> buildVariableDecl tokens
     _ -> let (stmt, rest') = buildStatement (token:tokens)
          in (Statement stmt, rest')
 
@@ -153,6 +145,7 @@ buildStatement (token:tokens) =
     (TOKEN PRINT _ _ _) -> buildPrintStatement (token:tokens)
     (TOKEN RETURN _ _ _) -> buildReturnStatement (tokens)
     (TOKEN WHILE _ _ _) -> buildWhileStatement (tokens)
+    (TOKEN LEFT_BRACE _ _ _) -> buildBlockStatement (tokens)
     _ -> let (exprStmt, rest') = buildExpr (token:tokens)
          in case rest' of
             TOKEN SEMICOLON _ _ _ : rest'' -> (ExprStmt exprStmt, rest'')
@@ -220,13 +213,13 @@ buildWhileStatement _ = error "Expected '('  after while statement"
 ---------------------------------------------------------
 -- Parse a Lox block statement from a list of tokens
 buildBlockStatement :: [Token] -> (Stmt, [Token])
-buildBlockStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
-  let (exprStmt, rest) = buildExpr tokens
+buildBlockStatement toks@(token:tokens) =
+  let (subdecl, rest) = buildDecls toks
   in case rest of
-    TOKEN RIGHT_PAREN _ _ _ : rest' -> let (stmt, rest'') = buildStatement rest'
-                                       in (WhileStmt exprStmt stmt, rest'')
-    _ -> error "Expected ')'"
-buildBlockStatement _ = error "Expected '('  after while statement"
+    (TOKEN RIGHT_BRACE _ _ _) : rest' -> (BlockStmt subdecl, rest')
+    _ -> error "expected '}' after block"
+
+
 
 
 
