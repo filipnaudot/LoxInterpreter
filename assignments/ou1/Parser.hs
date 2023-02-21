@@ -69,8 +69,8 @@ instance Show Expr where
     show (LogicalAnd expr1 expr2) = show expr1 ++ " AND " ++ show expr2
     show (Equality expr1 op expr2) = show expr1 ++ op ++ show expr2
     show (Comparison expr1 op expr2) = show expr1 ++ op ++ show expr2
-    show (Term expr1 op expr2) = show expr1 ++ op ++ show expr2
-    show (Factor expr1 op expr2) = show expr1 ++ op ++ show expr2
+    show (Term expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
+    show (Factor expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
     show (Unary op expr) = op ++ show expr
     show (Primary lit) = showLit lit
     show (Grouping expr) = "(" ++ show expr ++ ")"
