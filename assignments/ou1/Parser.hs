@@ -33,8 +33,6 @@ data Stmt = ExprStmt Expr
            | WhileStmt Expr Stmt
            | ForStmt (Maybe Stmt) (Maybe Expr) (Maybe Expr) Stmt
            | ReturnStmt (Maybe Expr)
-           | BreakStmt
-           | ContinueStmt
 
 instance Show Stmt where
   show (ExprStmt expr) = show expr ++ ";"
@@ -46,8 +44,6 @@ instance Show Stmt where
   show (ForStmt initializer condition increment stmt) = "for(" ++ show initializer ++ ";" ++ show condition ++ ";" ++ show increment ++ ")" ++ show stmt
   show (ReturnStmt (Just expr)) = "return" ++ show expr ++ ";"
   show (ReturnStmt Nothing) = "return;"
-  show BreakStmt = "break;"
-  show ContinueStmt = "continue;"
 
 
 -- Datatype for representing a Lox expression
