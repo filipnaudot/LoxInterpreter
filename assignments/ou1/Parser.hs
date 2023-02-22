@@ -83,6 +83,14 @@ showLiteral (NUM num) = show num
 showLiteral literal = show literal
 
 
+--
+-- Lox parser.
+--
+-- Author: Filip Naudot (ens19fpt@cs.umu.se)
+--
+-- Version information:
+--   2023-02-22: v1.0
+--
 ---------------------------------------------------------
 ------------------------ Main ---------------------------
 ---------------------------------------------------------
