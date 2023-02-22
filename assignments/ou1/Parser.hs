@@ -297,10 +297,12 @@ buildTerm :: [Token] -> (Expr, [Token])
 buildTerm tokens =
   let (leftExpr, restTokens) = buildFactor tokens
   in case restTokens of
-       (TOKEN MINUS strMinus _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildFactor restTokens1
-                                                   in (Term leftExpr strMinus rightExpr, restTokens2)
-       (TOKEN PLUS strPlus _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildFactor restTokens1
-                                                 in (Term leftExpr strPlus rightExpr, restTokens2)
+       (TOKEN MINUS strMinus _ _) : restTokens1 ->
+         let (rightExpr, restTokens2) = buildTerm restTokens1
+         in (Term leftExpr strMinus rightExpr, restTokens2)
+       (TOKEN PLUS strPlus _ _) : restTokens1 ->
+         let (rightExpr, restTokens2) = buildTerm restTokens1
+         in (Term leftExpr strPlus rightExpr, restTokens2)
        _ -> (leftExpr, restTokens)
 
 
