@@ -13,7 +13,7 @@ The main function of this module is `scanTokens`, which takes a list of characte
     - (Fibonacci) var a = 0; \n var temp; \n var b = 1; \n while (a < 10000) {print a; temp = a; a = b; b = temp + b}
 
 ## TODO Parser
-- [ ] Change op to operation in show
+- [ ] Change op to operator in show
 - [ ] Tests for parser
 
 
