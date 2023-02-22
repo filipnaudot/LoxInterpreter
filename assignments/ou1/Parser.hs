@@ -78,8 +78,8 @@ instance Show Expr where
 
 -- Format Literal for show function
 showLiteral (STR str) = "\"" ++ str ++ "\""
-showLiteral (NUM num) = show num
 showLiteral (ID id) = id
+showLiteral (NUM num) = show num
 showLiteral literal = show literal
 
 
