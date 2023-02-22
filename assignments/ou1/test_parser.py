@@ -62,13 +62,14 @@ test_factor_expected_output = [
 ]
 
 test_assignment_expected_output = [
-    "6",
+    "7",
     "variable22=\"hello\";",
     "a=(5.0*2.0);",
     "b=TRUE_LIT;",
     "c=FALSE_LIT;",
     "d=NIL_LIT;",
     "(a==b);",
+    "a=b=c;",
 ]
 
 test_stmt_expected_output = [

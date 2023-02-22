@@ -3,7 +3,7 @@ import Scanner
 import Parser
 
 -- Define test case
-test_assignment = "variable22 = \"hello\"; a = 5*2; b = true; c = false; d = nil; a == b;"
+test_assignment = "variable22 = \"hello\"; a = 5*2; b = true; c = false; d = nil; a == b; a = b = c;"
 
 main :: IO ()
 main = do
