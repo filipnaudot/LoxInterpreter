@@ -32,6 +32,35 @@ test_expr_expected_output = [
     "_e=(2.0+(2.0+(2.0*2.0)));",
 ]
 
+test_comparison_expected_output = [
+    "5",
+    "(a>b);",
+    "(a>=b);",
+    "(a==b);",
+    "(a<b);",
+    "(a<=b);",
+]
+
+test_term_expected_output = [
+    "6",
+    "(1.0+(2.0+(3.0+4.0)));",
+    "(((1.0+1.0))+1.0);",
+    "(a-(b+1.0));",
+    "(4.0-(3.0-1.0));",
+    "(1.0-(1.0-(1.0-(1.0-1.0))));",
+    "(1.0-(a+(b+(1.0-(1.0+(b-(c+1.5)))))));",
+]
+
+test_factor_expected_output = [
+    "6",
+    "(1.0*(2.0*(3.0*4.0)));",
+    "(1.0/(2.0/(3.0/4.0)));",
+    "(((1.0/2.0))/3.0);",
+    "(((1.0*1.0))/1.0);",
+    "(a/(b*1.0));",
+    "(1.0/(a*(b*(1.0/(1.0*(b/(c*1.5)))))));",
+]
+
 test_assignment_expected_output = [
     "6",
     "variable22=\"hello\";",
@@ -78,6 +107,9 @@ test_fibonacci_program_expected_output = [
 tests = [
     ("TestLiteral.hs", test_leteral_expected_output),
     ("TestExpr.hs", test_expr_expected_output),
+    ("TestComparison.hs", test_comparison_expected_output),
+    ("TestTerm.hs", test_term_expected_output),
+    ("TestFactor.hs", test_factor_expected_output),
     ("TestAssignment.hs", test_assignment_expected_output),
     ("TestStmt.hs", test_stmt_expected_output),
     ("TestVarDecl.hs", test_var_declaration_expected_output),
