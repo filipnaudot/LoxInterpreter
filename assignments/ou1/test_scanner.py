@@ -104,7 +104,7 @@ def run_test(test_name):
         @param test_name The name of test test file.
     """
     # Run test and capture output
-    result = subprocess.run(["runhaskell", "./tests/" + str(test_name)], capture_output=True, text=True)
+    result = subprocess.run(["runhaskell", "./tests/scanner/" + str(test_name)], capture_output=True, text=True)
     output = result.stdout
     error = result.stderr
     

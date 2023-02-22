@@ -4,6 +4,20 @@ This is a Lox lexer, a module that takes in a stream of characters and converts 
 
 The main function of this module is `scanTokens`, which takes a list of characters and returns a list of `Token`s.
 
+
+
+### Notes
+    - if(1) if(1){var a = 1} else{b=1}
+    - print "hi" or 2;
+      print nil or "yes";
+    - (Fibonacci) var a = 0; \n var temp; \n var b = 1; \n while (a < 10000) {print a; temp = a; a = b; b = temp + b}
+
+## TODO Parser
+- [ ] Change op to operation in show
+- [ ] Tests for parser
+
+
+
 ## How to build and run
 The first step is to start `ghci` by running the following command: 
 ```bash
