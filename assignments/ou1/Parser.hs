@@ -245,9 +245,8 @@ buildAssignment (token:tokens) =
     TOKEN IDENTIFIER strValue _ _ ->
       -- check for assignment
       case tokens of
-        (TOKEN EQUAL _ _ _) : restTokens1 ->
-          let (valueExpr, restTokens2) = buildAssignment restTokens1
-          in (Assignment strValue valueExpr, restTokens2)
+        (TOKEN EQUAL _ _ _) : restTokens1 -> let (valueExpr, restTokens2) = buildAssignment restTokens1
+                                             in (Assignment strValue valueExpr, restTokens2)
         _ -> buildLogicalOr (token:tokens)
     _ -> buildLogicalOr (token:tokens)
 
