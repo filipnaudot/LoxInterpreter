@@ -63,11 +63,11 @@ instance Show Expr where
     show (Assignment id expr) = id ++ "=" ++ show expr
     show (LogicalOr expr1 expr2) = show expr1 ++ "OR" ++ show expr2
     show (LogicalAnd expr1 expr2) = "(" ++ show expr1 ++ "&&" ++ show expr2  ++ ")"
-    show (Equality expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
-    show (Comparison expr1 op expr2) = show expr1 ++ op ++ show expr2
-    show (Term expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
-    show (Factor expr1 op expr2) = "(" ++ show expr1 ++ op ++ show expr2 ++ ")"
-    show (Unary op expr) = "(" ++ op ++ show expr ++ ")"
+    show (Equality expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
+    show (Comparison expr1 operator expr2) = show expr1 ++ operator ++ show expr2
+    show (Term expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
+    show (Factor expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
+    show (Unary operator expr) = "(" ++ operator ++ show expr ++ ")"
     show (Primary lit) = showLiteral lit
     show (Grouping expr) = "(" ++ show expr ++ ")"
 
