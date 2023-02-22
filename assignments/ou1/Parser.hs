@@ -317,11 +317,12 @@ buildFactor :: [Token] -> (Expr, [Token])
 buildFactor tokens =
   let (leftExpr, restTokens) = buildUnary tokens
   in case restTokens of
-    (TOKEN SLASH strSlash _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
+    (TOKEN SLASH strSlash _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildFactor restTokens1
                                                 in (Factor leftExpr strSlash rightExpr, restTokens2)
-    (TOKEN STAR strStar _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
+    (TOKEN STAR strStar _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildFactor restTokens1
                                               in (Factor leftExpr strStar rightExpr, restTokens2)
     _ -> (leftExpr, restTokens)
+
 
 
 buildUnary :: [Token] -> (Expr, [Token])
