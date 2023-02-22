@@ -275,11 +275,11 @@ buildEquality :: [Token] -> (Expr, [Token])
 buildEquality tokens =
   let (leftExpr, restTokens) = buildComparison tokens
   in case restTokens of
-       (TOKEN BANG_EQUAL strBangEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildComparison restTokens1
-                                                            in (Equality leftExpr strBangEqual rightExpr, restTokens2)
-       (TOKEN EQUAL_EQUAL strEqualEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildComparison restTokens1
-                                                              in (Equality leftExpr strEqualEqual rightExpr, restTokens2)
-       _ -> (leftExpr, restTokens)
+    (TOKEN BANG_EQUAL strBangEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildComparison restTokens1
+                                                         in (Equality leftExpr strBangEqual rightExpr, restTokens2)
+    (TOKEN EQUAL_EQUAL strEqualEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildComparison restTokens1
+                                                           in (Equality leftExpr strEqualEqual rightExpr, restTokens2)
+    _ -> (leftExpr, restTokens)
 
 
 buildComparison :: [Token] -> (Expr, [Token])
@@ -287,43 +287,41 @@ buildComparison tokens =
   let (leftExpr, restTokens) = buildTerm tokens
   
   in case restTokens of
-       -- > Term 
-       (TOKEN GREATER strGreater _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
-                                                       in (Term leftExpr strGreater rightExpr, restTokens2)
-       -- >= Term 
-       (TOKEN GREATER_EQUAL strGreaterEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
-                                                                  in (Term leftExpr strGreaterEqual rightExpr, restTokens2)
-       -- < Term 
-       (TOKEN LESS strLess _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
-                                                 in (Term leftExpr strLess rightExpr, restTokens2)
-       -- <= Term 
-       (TOKEN LESS_EQUAL strLessEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
-                                                            in (Term leftExpr strLessEqual rightExpr, restTokens2)
-       _ -> (leftExpr, restTokens)
+    -- > Term 
+    (TOKEN GREATER strGreater _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
+                                                    in (Term leftExpr strGreater rightExpr, restTokens2)
+    -- >= Term 
+    (TOKEN GREATER_EQUAL strGreaterEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
+                                                               in (Term leftExpr strGreaterEqual rightExpr, restTokens2)
+    -- < Term 
+    (TOKEN LESS strLess _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
+                                              in (Term leftExpr strLess rightExpr, restTokens2)
+    -- <= Term 
+    (TOKEN LESS_EQUAL strLessEqual _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
+                                                         in (Term leftExpr strLessEqual rightExpr, restTokens2)
+    _ -> (leftExpr, restTokens)
                                           
 
 buildTerm :: [Token] -> (Expr, [Token])
 buildTerm tokens =
   let (leftExpr, restTokens) = buildFactor tokens
   in case restTokens of
-       (TOKEN MINUS strMinus _ _) : restTokens1 ->
-         let (rightExpr, restTokens2) = buildTerm restTokens1
-         in (Term leftExpr strMinus rightExpr, restTokens2)
-       (TOKEN PLUS strPlus _ _) : restTokens1 ->
-         let (rightExpr, restTokens2) = buildTerm restTokens1
-         in (Term leftExpr strPlus rightExpr, restTokens2)
-       _ -> (leftExpr, restTokens)
+    (TOKEN MINUS strMinus _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
+                                                in (Term leftExpr strMinus rightExpr, restTokens2)
+    (TOKEN PLUS strPlus _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
+                                              in (Term leftExpr strPlus rightExpr, restTokens2)
+    _ -> (leftExpr, restTokens)
 
 
 buildFactor :: [Token] -> (Expr, [Token])
 buildFactor tokens =
   let (leftExpr, restTokens) = buildUnary tokens
   in case restTokens of
-       (TOKEN SLASH strSlash _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
-                                                   in (Factor leftExpr strSlash rightExpr, restTokens2)
-       (TOKEN STAR strStar _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
-                                                 in (Factor leftExpr strStar rightExpr, restTokens2)
-       _ -> (leftExpr, restTokens)
+    (TOKEN SLASH strSlash _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
+                                                in (Factor leftExpr strSlash rightExpr, restTokens2)
+    (TOKEN STAR strStar _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildUnary restTokens1
+                                              in (Factor leftExpr strStar rightExpr, restTokens2)
+    _ -> (leftExpr, restTokens)
 
 
 buildUnary :: [Token] -> (Expr, [Token])
