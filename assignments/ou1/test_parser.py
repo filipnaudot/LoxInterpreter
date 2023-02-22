@@ -8,17 +8,82 @@ TEST_NAME_INDEX = 0
 ##########################################################################
 ######################### Define expected output #########################
 ##########################################################################
+test_leteral_expected_output = [
+    "8",
+    "TRUE_LIT;",
+    "FALSE_LIT;",
+    "5.0;",
+    "5.111;",
+    "a;",
+    "_ab;",
+    "NIL_LIT;",
+    "\"string\";",
+]
+
+test_expr_expected_output = [
+    "8",
+    "(5.0*2.0);",
+    "(TRUE_LIT&&FALSE_LIT);",
+    "(-2.0);",
+    "(!TRUE_LIT);",
+    "((2.0==3.0));",
+    "(2.0+(3.0*5.0));",
+    "d=(((2.0+2.0))+(2.0*2.0));",
+    "_e=(2.0+(2.0+(2.0*2.0)));",
+]
+
+test_assignment_expected_output = [
+    "6",
+    "variable22=\"hello\";",
+    "a=(5.0*2.0);",
+    "b=TRUE_LIT;",
+    "c=FALSE_LIT;",
+    "d=NIL_LIT;",
+    "(a==b);",
+]
+
+test_stmt_expected_output = [
+    "5",
+    "if(a)(5.0*2.0);",
+    "if(a){(5.0*2.0);}",
+    "if(a)(5.0*2.0);else99.0;",
+    "if(a){(5.0*2.0);}else{99.0;}",
+    "{5.0; 7.0; 9.0;}",
+]
+
 test_var_declaration_expected_output = [
-    "3",
+    "6",
     "V DEC -> a=1.0;",
     "V DEC -> b=TRUE_LIT;",
     "V DEC -> c=FALSE_LIT;",
+    "V DEC -> str=\"hello\";",
+    "V DEC -> d=((2.0/7.0));",
+    "V DEC -> empty;",
+]
+
+test_program_expected_output = [
+    "1",
+    "if((a<5.0)){printg; 88.0;}else{if(FALSE_LIT){while(a=5.0)return;}}",
+]
+
+test_fibonacci_program_expected_output = [
+    "4",
+    "V DEC -> a=0.0;",
+    "V DEC -> temp;",
+    "V DEC -> b=1.0;",
+    "while((a<10000.0)){printa; temp=a; a=b; b=(temp+b);}",
 ]
 
 
-
-tests = [("TestVarDecl.hs", test_var_declaration_expected_output)
-         ]
+tests = [
+    ("TestLiteral.hs", test_leteral_expected_output),
+    ("TestExpr.hs", test_expr_expected_output),
+    ("TestAssignment.hs", test_assignment_expected_output),
+    ("TestStmt.hs", test_stmt_expected_output),
+    ("TestVarDecl.hs", test_var_declaration_expected_output),
+    ("TestProg.hs", test_program_expected_output),
+    ("TestFibProg.hs", test_fibonacci_program_expected_output),
+    ]
 
 
 
