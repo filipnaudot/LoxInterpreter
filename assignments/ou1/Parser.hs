@@ -167,9 +167,10 @@ buildIfStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
   in case rest of
     TOKEN RIGHT_PAREN _ _ _ : rest' -> let (ifStmt, rest'') = buildStatement rest'
                                        in case rest'' of
-                                            (TOKEN ELSE _ _ _) : rest3 -> let (elseStmt, rest4) = buildStatement rest3
-                                                                             in (IfStmt exprStmt ifStmt (Just elseStmt), rest4)
-                                            _ -> (IfStmt exprStmt ifStmt Nothing, rest'')
+                                        (TOKEN ELSE _ _ _) : rest3 -> 
+                                          let (elseStmt, rest4) = buildStatement rest3
+                                          in (IfStmt exprStmt ifStmt (Just elseStmt), rest4)
+                                        _ -> (IfStmt exprStmt ifStmt Nothing, rest'')
     _ -> error "Expected ')' after if statement"
 buildIfStatement _ = error "Expected 'if' keyword followed by '('"  
 
