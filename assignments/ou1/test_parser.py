@@ -72,6 +72,15 @@ test_assignment_expected_output = [
     "a=b=c;",
 ]
 
+test_and_or_expected_output = [
+    "5",
+    "((a&&b));",
+    "(a&&b);",
+    "(a&&(b&&(c&&d)));",
+    "(a||a);",
+    "(a||(b||(c&&d)));",
+]
+
 test_stmt_expected_output = [
     "6",
     "if(a)(5.0*2.0);",
@@ -113,6 +122,7 @@ tests = [
     ("TestTerm.hs", test_term_expected_output),
     ("TestFactor.hs", test_factor_expected_output),
     ("TestAssignment.hs", test_assignment_expected_output),
+    ("TestAndOr.hs", test_and_or_expected_output),
     ("TestStmt.hs", test_stmt_expected_output),
     ("TestVarDecl.hs", test_var_declaration_expected_output),
     ("TestProg.hs", test_program_expected_output),

@@ -3,7 +3,7 @@ import Scanner
 import Parser
 
 -- Define test case
-test_and = "(a and b); a and b and c and d;"
+test_and = "(a and b); a and b; a and b and c and d; a or a; a or b or c and d;"
 
 main :: IO ()
 main = do
