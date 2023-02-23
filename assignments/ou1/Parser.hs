@@ -105,7 +105,8 @@ parse tokens = let (decls, []) = buildDecls tokens
 ---------------------------------------------------------
 -- Parse a list of Lox declarations from a list of tokens
 buildDecls :: [Token] -> ([Declaration], [Token])
-buildDecls (TOKEN EOF _ _ _ : rest) = ([], rest)
+buildDecls (TOKEN EOF _ _ _ : []) = ([], [])
+buildDecls (TOKEN EOF _ _ pos : _) = error $ "Unexpected EOF token on line " ++ show pos ++ ". EOF token should be the last token."
 buildDecls toks@(TOKEN RIGHT_BRACE _ _ _ : rest) = ([], toks)
 buildDecls tokens = 
   let (decl, rest) = buildDecl tokens
