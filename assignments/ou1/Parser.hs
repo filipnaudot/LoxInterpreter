@@ -106,7 +106,7 @@ parse tokens = let (decls, []) = buildDecls tokens
 -- Parse a list of Lox declarations from a list of tokens
 buildDecls :: [Token] -> ([Declaration], [Token])
 buildDecls (TOKEN EOF _ _ _ : []) = ([], [])
-buildDecls (TOKEN EOF _ _ pos : _) = error $ "Unexpected EOF token on line " ++ show pos ++ ". EOF token should be the last token."
+buildDecls (TOKEN EOF _ _ line : _) = error $ "Unexpected EOF token on line " ++ show line ++ ". EOF token should be the last token."
 buildDecls toks@(TOKEN RIGHT_BRACE _ _ _ : rest) = ([], toks)
 buildDecls tokens = 
   let (decl, rest) = buildDecl tokens
@@ -128,14 +128,14 @@ buildDecl (token:tokens) =
 ---------------------------------------------------------
 -- Parse a Lox variable declaration from a list of tokens
 buildVariableDecl :: [Token] -> (Declaration, [Token])
-buildVariableDecl toks@(TOKEN IDENTIFIER _ (ID idStr) _ : tokens) =
+buildVariableDecl toks@(TOKEN IDENTIFIER _ (ID idStr) line : tokens) =
   case tokens of
     TOKEN SEMICOLON _ _ _ : rest1 -> (VariableDecl (ID idStr) Nothing, rest1)
-    TOKEN EQUAL _ _ _ : exprTokens -> let (expr, rest) = buildExpr exprTokens
+    TOKEN EQUAL _ _ line : exprTokens -> let (expr, rest) = buildExpr exprTokens
                                       in case rest of
                                         TOKEN SEMICOLON _ _ _ : rest2 -> (VariableDecl (ID idStr) (Just expr), rest2)
-                                        _ -> error "Expected semicolon after variable declaration"
-    _ -> error "Expected semicolon or equals sign after variable identifier"
+                                        _ -> error ("Expected semicolon after variable declaration on line " ++ show line)
+    _ -> error ("Expected semicolon or equals sign after variable identifier on line " ++ show line)
 buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
 
 
@@ -347,4 +347,4 @@ buildPrimary ((TOKEN LEFT_PAREN _ _ _) : tokens) =
   in case tokenRest1 of
        (TOKEN RIGHT_PAREN _ _ _) : tokenRest2 -> (Grouping expr, tokenRest2)
        _ -> error "Expected ')' after expression in grouping."
-buildPrimary _ = error "Expected expression."
+buildPrimary ((TOKEN _ _ _ line) : _) = error ("Expected expression on line " ++ show line)
