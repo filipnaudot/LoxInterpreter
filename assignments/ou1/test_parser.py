@@ -73,12 +73,13 @@ test_assignment_expected_output = [
 ]
 
 test_stmt_expected_output = [
-    "5",
+    "6",
     "if(a)(5.0*2.0);",
     "if(a){(5.0*2.0);}",
     "if(a)(5.0*2.0);else99.0;",
     "if(a){(5.0*2.0);}else{99.0;}",
     "{5.0; 7.0; 9.0;}",
+    "{}",
 ]
 
 test_var_declaration_expected_output = [
