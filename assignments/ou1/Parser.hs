@@ -21,7 +21,7 @@ import LoxGrammar
 ---------------------------------------------------------
 ------------------------ Main ---------------------------
 ---------------------------------------------------------
--- Parse a Lox program from a list of tokens
+-- Parse a Lox program from a list of tokens and validates syntax.
 parse :: [Token] -> Program
 parse tokens = let (decls, []) = buildDecls tokens
                in PROGRAM decls
