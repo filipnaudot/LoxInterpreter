@@ -61,7 +61,7 @@ data Expr
 
 instance Show Expr where
     show (Assignment id expr) = id ++ "=" ++ show expr
-    show (LogicalOr expr1 expr2) = show expr1 ++ "OR" ++ show expr2
+    show (LogicalOr expr1 expr2) = "(" ++ show expr1 ++ "||" ++ show expr2 ++ ")"
     show (LogicalAnd expr1 expr2) = "(" ++ show expr1 ++ "&&" ++ show expr2  ++ ")"
     show (Equality expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
     show (Comparison expr1 operator expr2) = show expr1 ++ operator ++ show expr2
