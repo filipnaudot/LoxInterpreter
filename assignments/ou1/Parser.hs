@@ -163,10 +163,21 @@ buildBlockStatement toks@(token:tokens) =
 ---------------------------------------------------------
 ---------------------- Expression -----------------------
 ---------------------------------------------------------
+-- buildExpr  - Builds an antire expression statement.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildExpr :: [Token] -> (Expr, [Token])
 buildExpr tokens = buildAssignment tokens
 
 
+-- buildAssignment  - Builds an assignment statement. Checks
+--                    for identifier followed by equal sign.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildAssignment :: [Token] -> (Expr, [Token])
 buildAssignment (token:tokens) =
   case token of
@@ -179,6 +190,12 @@ buildAssignment (token:tokens) =
     _ -> buildLogicalOr (token:tokens)
 
 
+-- buildLogicalOr  - Builds logical or statement. Consists of 
+--                   logical and statements on both sides.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildLogicalOr :: [Token] -> (Expr, [Token])
 buildLogicalOr tokens =
   let (leftExpr, restTokens) = buildLogicalAnd tokens
@@ -188,6 +205,12 @@ buildLogicalOr tokens =
     _ -> (leftExpr, restTokens)
        
 
+-- buildLogicalAnd  - Builds logical and statement. Consists of 
+--                    equality statements on both sides.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildLogicalAnd :: [Token] -> (Expr, [Token])
 buildLogicalAnd tokens = 
   let (left, restTokens) = buildEquality tokens
@@ -198,6 +221,12 @@ buildLogicalAnd tokens =
     _ -> (left, restTokens)
 
 
+-- buildEquality  - Builds equality statement. Checks if it
+--                  should evaluate equal or not equal.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildEquality :: [Token] -> (Expr, [Token])
 buildEquality tokens =
   let (leftExpr, restTokens) = buildComparison tokens
@@ -209,6 +238,12 @@ buildEquality tokens =
     _ -> (leftExpr, restTokens)
 
 
+-- buildComparison  - Builds comprison statement. A comprison can
+--                    be one of the following >, >=, <, <=.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildComparison :: [Token] -> (Expr, [Token])
 buildComparison tokens =
   let (leftExpr, restTokens) = buildTerm tokens
@@ -228,6 +263,12 @@ buildComparison tokens =
     _ -> (leftExpr, restTokens)
                                           
 
+-- buildTerm  - Builds term. A term contains MINUS
+--              for subtraction or PLUS for addition.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildTerm :: [Token] -> (Expr, [Token])
 buildTerm tokens =
   let (leftExpr, restTokens) = buildFactor tokens
@@ -239,6 +280,12 @@ buildTerm tokens =
     _ -> (leftExpr, restTokens)
 
 
+-- buildFactor  - Builds factor. A factor contains SLASH
+--                for division or STAR for multiplication.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildFactor :: [Token] -> (Expr, [Token])
 buildFactor tokens =
   let (leftExpr, restTokens) = buildUnary tokens
@@ -250,7 +297,11 @@ buildFactor tokens =
     _ -> (leftExpr, restTokens)
 
 
-
+-- buildUnary  - Builds unary. Check for negations and calls buildPrimary.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildUnary :: [Token] -> (Expr, [Token])
 buildUnary tokens =
   case tokens of
@@ -261,6 +312,11 @@ buildUnary tokens =
     _ -> buildPrimary tokens
 
 
+-- buildPrimary  - Builds primary. End point for expression.
+--               
+-- Input:
+--  [Token] - List of lox-tokens
+-- Returns a Expr containing the Expr value and the rest of the tokens.
 buildPrimary :: [Token] -> (Expr, [Token])
 buildPrimary ((TOKEN TRUE _ TRUE_LIT _) : tokens) = (Primary TRUE_LIT, tokens)
 buildPrimary ((TOKEN FALSE _ FALSE_LIT _) : tokens) = (Primary FALSE_LIT, tokens)
