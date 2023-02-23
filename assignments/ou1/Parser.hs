@@ -30,7 +30,7 @@ parse tokens = let (decls, []) = buildDecls tokens
 ---------------------------------------------------------
 --------------------- Declaration -----------------------
 ---------------------------------------------------------
--- Parse a list of Lox declarations from a list of tokens
+-- Parse a list of Lox declarations from a list of tokens.
 buildDecls :: [Token] -> ([Declaration], [Token])
 buildDecls (TOKEN EOF _ _ _ : []) = ([], [])
 buildDecls (TOKEN EOF _ _ line : _) = error $ "Unexpected EOF token on line " ++ show line ++ ". EOF token should be the last token."
@@ -40,8 +40,7 @@ buildDecls tokens =
       (decls, tokens') = buildDecls rest
   in (decl : decls, tokens')
 
-
--- Parse a Lox declaration from a list of tokens
+-- Parse a single Lox declaration from a list of tokens.
 buildDecl :: [Token] -> (Declaration, [Token])
 buildDecl (token:tokens) = 
   case token of
@@ -53,7 +52,7 @@ buildDecl (token:tokens) =
 ---------------------------------------------------------
 ----------------- Variable declaration ------------------
 ---------------------------------------------------------
--- Parse a Lox variable declaration from a list of tokens
+-- Parse a Lox variable declaration from a list of tokens.
 buildVariableDecl :: [Token] -> (Declaration, [Token])
 buildVariableDecl toks@(TOKEN IDENTIFIER _ (ID idStr) line : tokens) =
   case tokens of
@@ -69,10 +68,9 @@ buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
 ---------------------------------------------------------
 ----------------------- Statement -----------------------
 ---------------------------------------------------------
--- Parse a Lox statement from a list of tokens
+-- Parse an entire Lox statement from a list of tokens.
 buildStatement :: [Token] -> (Stmt, [Token])
 buildStatement (token:tokens) = 
-  --trace ("buildStatement: " ++ show (token:tokens)) $ -- trace input tokens list
   case token of
     (TOKEN IF _ _ _) -> buildIfStatement (tokens)
     (TOKEN PRINT _ _ _) -> buildPrintStatement (token:tokens)
@@ -118,6 +116,7 @@ buildPrintStatement (token:tokens) =
 ---------------------------------------------------------
 -------------------- Return statement -------------------
 ---------------------------------------------------------
+-- Parse a Lox return statement from a list of tokens.
 buildReturnStatement :: [Token] -> (Stmt, [Token])
 buildReturnStatement toks@(token:tokens) =
   let (maybeExpr, rest) =
@@ -133,7 +132,7 @@ buildReturnStatement toks@(token:tokens) =
 ---------------------------------------------------------
 -------------------- While statement -------------------
 ---------------------------------------------------------
--- Parse a Lox while statement from a list of tokens
+-- Parse a Lox while statement from a list of tokens.
 buildWhileStatement :: [Token] -> (Stmt, [Token])
 buildWhileStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
   let (exprStmt, rest) = buildExpr tokens
@@ -147,7 +146,7 @@ buildWhileStatement _ = error "Expected '('  after while statement"
 ---------------------------------------------------------
 -------------------- Block statement --------------------
 ---------------------------------------------------------
--- Parse a Lox block statement from a list of tokens
+-- Parse a Lox block statement from a list of tokens.
 buildBlockStatement :: [Token] -> (Stmt, [Token])
 buildBlockStatement toks@(token:tokens) =
   let (subdecl, rest) = buildDecls toks
