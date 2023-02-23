@@ -341,9 +341,9 @@ buildPrimary ((TOKEN NIL _ NIL_LIT _) : tokens) = (Primary NIL_LIT, tokens)
 buildPrimary ((TOKEN NUMBER _ (NUM num) _) : tokens) = (Primary (NUM num), tokens)
 buildPrimary ((TOKEN STRING _ (STR str) _) : tokens) = (Primary (STR str), tokens)
 buildPrimary ((TOKEN IDENTIFIER _ (ID str) _) : tokens) = (Primary (ID str), tokens)
-buildPrimary ((TOKEN LEFT_PAREN _ _ _) : tokens) =
+buildPrimary ((TOKEN LEFT_PAREN _ _ line) : tokens) =
   let (expr, tokenRest1) = buildExpr tokens
   in case tokenRest1 of
        (TOKEN RIGHT_PAREN _ _ _) : tokenRest2 -> (Grouping expr, tokenRest2)
-       _ -> error "Expected ')' after expression in grouping."
+       _ -> error ("Expected ')' after expression grouping. Opening '(' is on line " ++ show line)
 buildPrimary ((TOKEN _ _ _ line) : _) = error ("Expected expression on line " ++ show line)
