@@ -285,7 +285,6 @@ buildEquality tokens =
 buildComparison :: [Token] -> (Expr, [Token])
 buildComparison tokens =
   let (leftExpr, restTokens) = buildTerm tokens
-  
   in case restTokens of
     -- > Term 
     (TOKEN GREATER strGreater _ _) : restTokens1 -> let (rightExpr, restTokens2) = buildTerm restTokens1
