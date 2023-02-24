@@ -21,8 +21,8 @@ instance Show Program where
 data Declaration = VariableDecl Literal (Maybe Expr) | Statement Stmt
 
 instance Show Declaration where
-  show (VariableDecl id Nothing) = "V DEC -> " ++ showLiteral id ++ ";"
-  show (VariableDecl id (Just expr)) = "V DEC -> " ++ showLiteral id ++ "=" ++ show expr ++ ";"
+  show (VariableDecl id Nothing) = "V DEC -> " ++ getLiteral id ++ ";"
+  show (VariableDecl id (Just expr)) = "V DEC -> " ++ getLiteral id ++ "=" ++ show expr ++ ";"
   show (Statement stmt) = show stmt
 
 
@@ -71,7 +71,7 @@ instance Show Expr where
     show (Term expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
     show (Factor expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
     show (Unary operator expr) = "(" ++ operator ++ show expr ++ ")"
-    show (Primary lit) = showLiteral lit
+    show (Primary lit) = getLiteral lit
     show (Grouping expr) = "(" ++ show expr ++ ")"
 
 
@@ -80,8 +80,9 @@ instance Show Expr where
 ------------------- Helper functions --------------------
 ---------------------------------------------------------
 
--- Format Literal for show function. Needed because literal has deriving show.
-showLiteral (STR str) = "\"" ++ str ++ "\""
-showLiteral (ID id) = id
-showLiteral (NUM num) = show num
-showLiteral literal = show literal
+-- Format/retrieve the actual value of a literal for show function.
+-- Needed because literal has deriving show.
+getLiteral (STR str) = "\"" ++ str ++ "\""
+getLiteral (ID id) = id
+getLiteral (NUM num) = show num
+getLiteral literal = show literal
