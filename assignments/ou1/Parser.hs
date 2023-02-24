@@ -5,7 +5,7 @@ import Data.Maybe
 import Data.Char
 import Debug.Trace      -- For debug prints.
 
-import Scanner          -- Import the scanner.
+--import Scanner          -- Import the scanner.
 import Tokens           -- Import data types.
 import LoxGrammar
 
