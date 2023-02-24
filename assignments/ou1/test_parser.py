@@ -136,6 +136,22 @@ test_double_var_expected_output = [
     "TestDoubleVar.hs: Expected 'var' keyword followed by identifier",
 ]
 
+test_missing_statement_while_expected_output = [
+    "TestNoStmtWhile.hs: Unexpected \";\" on line 1",
+]
+
+test_missing_expr_while_expected_output = [
+    "TestNoExprWhile.hs: Missing expression for while-statement on line 1",
+]
+
+test_missing_statement_if_expected_output = [
+    "TestNoStmtIf.hs: Unexpected \"\" on line 1",
+]
+
+test_missing_expr_if_expected_output = [
+    "TestNoExprIf.hs: Missing expression for if-statement on line 1",
+]
+
 
 tests = [
     ("TestLiteral.hs", test_leteral_expected_output),
@@ -154,6 +170,10 @@ tests = [
     ("TestNoSemColVar.hs", test_missing_semicolon_var_expected_output),
     ("TestNoSemColExpr.hs", test_missing_semicolon_expr_expected_output),
     ("TestDoubleVar.hs", test_double_var_expected_output),
+    ("TestNoStmtWhile.hs", test_missing_statement_while_expected_output),
+    ("TestNoExprWhile.hs", test_missing_expr_while_expected_output),
+    ("TestNoStmtIf.hs", test_missing_statement_if_expected_output),
+    ("TestNoExprIf.hs", test_missing_expr_if_expected_output),
     ]
 
 

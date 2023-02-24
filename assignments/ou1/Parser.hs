@@ -88,6 +88,7 @@ buildStatement (token:tokens) =
 ---------------------------------------------------------
 -- Parse a Lox if statement from a list of tokens
 buildIfStatement :: [Token] -> (Stmt, [Token])
+buildIfStatement (TOKEN LEFT_PAREN _ _ line : TOKEN RIGHT_PAREN _ _ _ : tokens) = error ("Missing expression for if-statement on line " ++ show line)
 buildIfStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
   let (exprStmt, rest) = buildExpr tokens
   in case rest of
@@ -97,7 +98,7 @@ buildIfStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
                                           let (elseStmt, rest4) = buildStatement rest3
                                           in (IfStmt exprStmt ifStmt (Just elseStmt), rest4)
                                         _ -> (IfStmt exprStmt ifStmt Nothing, rest'')
-    _ -> error "Expected ')' after if statement"
+    _ -> error "Expected closing ')' after if expression"
 buildIfStatement _ = error "Expected 'if' keyword followed by '('"  
 
 
@@ -134,12 +135,13 @@ buildReturnStatement toks@(token:tokens) =
 ---------------------------------------------------------
 -- Parse a Lox while statement from a list of tokens.
 buildWhileStatement :: [Token] -> (Stmt, [Token])
+buildWhileStatement (TOKEN LEFT_PAREN _ _ line : TOKEN RIGHT_PAREN _ _ _ : tokens) = error ("Missing expression for while-statement on line " ++ show line)
 buildWhileStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
   let (exprStmt, rest) = buildExpr tokens
   in case rest of
     TOKEN RIGHT_PAREN _ _ _ : rest' -> let (stmt, rest'') = buildStatement rest'
                                        in (WhileStmt exprStmt stmt, rest'')
-    _ -> error "Expected ')'"
+    _ -> error "Expected closing ')' after while expression"
 buildWhileStatement _ = error "Expected '('  after while statement"
 
 
