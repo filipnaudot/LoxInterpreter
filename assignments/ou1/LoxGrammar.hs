@@ -85,4 +85,4 @@ instance Show Expr where
 getLiteral (STR str) = "\"" ++ str ++ "\""
 getLiteral (ID id) = id
 getLiteral (NUM num) = show num
-getLiteral literal = show literal
+getLiteral literal = show literal -- Used for FALSE_LIT, TRUE_LIT and NIL_LIT
