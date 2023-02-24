@@ -82,13 +82,15 @@ test_and_or_expected_output = [
 ]
 
 test_stmt_expected_output = [
-    "6",
+    "8",
     "if(a)(5.0*2.0);",
     "if(a){(5.0*2.0);}",
     "if(a)(5.0*2.0);else99.0;",
     "if(a){(5.0*2.0);}else{99.0;}",
     "{5.0; 7.0; 9.0;}",
     "{}",
+    "while(1.0)printa;",
+    "while(1.0){printa;}",
 ]
 
 test_var_declaration_expected_output = [
