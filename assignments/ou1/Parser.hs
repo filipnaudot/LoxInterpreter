@@ -7,7 +7,7 @@ import Debug.Trace      -- For debug prints.
 
 --import Scanner          -- Import the scanner.
 import Tokens           -- Import data types.
-import LoxGrammar
+import LoxGrammar       -- Import grammar/data types.
 
 
 --
