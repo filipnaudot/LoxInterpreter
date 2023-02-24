@@ -328,4 +328,4 @@ buildPrimary ((TOKEN LEFT_PAREN _ _ line) : tokens) =
   in case tokenRest1 of
        (TOKEN RIGHT_PAREN _ _ _) : tokenRest2 -> (Grouping expr, tokenRest2)
        _ -> error ("Expected ')' after expression grouping. Opening '(' is on line " ++ show line)
-buildPrimary ((TOKEN _ _ _ line) : _) = error ("Expected expression on line " ++ show line)
+buildPrimary ((TOKEN _ str _ line) : _) = error ("Unexpected " ++ show str ++ " on line " ++ show line)
