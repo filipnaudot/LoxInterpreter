@@ -114,6 +114,26 @@ test_fibonacci_program_expected_output = [
     "while((a<10000.0)){printa; temp=a; a=b; b=(temp+b);}",
 ]
 
+test_missing_closing_parentheses_expected_output = [
+    "TestNoCloseParen.hs: Expected ')' after expression grouping. Opening '(' is on line 1",
+]
+
+test_missing_opening_parentheses_expected_output = [
+    "TestNoOpenParen.hs: Unexpected \")\" on line 1",
+]
+
+test_missing_semicolon_var_expected_output = [
+    "TestNoSemColVar.hs: Expected semicolon or equals sign after variable identifier on line 1",
+]
+
+test_missing_semicolon_expr_expected_output = [
+    "TestNoSemColExpr.hs: Expected semicolon after expression statement",
+]
+
+test_double_var_expected_output = [
+    "TestDoubleVar.hs: Expected 'var' keyword followed by identifier",
+]
+
 
 tests = [
     ("TestLiteral.hs", test_leteral_expected_output),
@@ -127,6 +147,11 @@ tests = [
     ("TestVarDecl.hs", test_var_declaration_expected_output),
     ("TestProg.hs", test_program_expected_output),
     ("TestFibProg.hs", test_fibonacci_program_expected_output),
+    ("TestNoCloseParen.hs", test_missing_closing_parentheses_expected_output),
+    ("TestNoOpenParen.hs", test_missing_opening_parentheses_expected_output),
+    ("TestNoSemColVar.hs", test_missing_semicolon_var_expected_output),
+    ("TestNoSemColExpr.hs", test_missing_semicolon_expr_expected_output),
+    ("TestDoubleVar.hs", test_double_var_expected_output),
     ]
 
 
@@ -148,9 +173,10 @@ def run_test(test_name):
     output = result.stdout
     error = result.stderr
     
-    # Print the output and error
     #print(output)
-    print(error, end='')
+    if error != "":
+        #print(str(error), end='')
+        output = error
 
     return output
 
