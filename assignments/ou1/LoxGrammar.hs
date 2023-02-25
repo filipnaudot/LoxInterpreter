@@ -38,12 +38,12 @@ data Stmt
 
 instance Show Stmt where
   show (ExprStmt expr) = show expr ++ ";"
-  show (IfStmt condition stmt (Just elseStmt)) = "if(" ++ show condition ++ ")" ++ show stmt ++ "else" ++ show elseStmt
-  show (IfStmt condition stmt Nothing) = "if(" ++ show condition ++ ")" ++ show stmt
+  show (IfStmt expr stmt (Just elseStmt)) = "if(" ++ show expr ++ ")" ++ show stmt ++ "else" ++ show elseStmt
+  show (IfStmt expr stmt Nothing) = "if(" ++ show expr ++ ")" ++ show stmt
   show (PrintStmt expr) = "print" ++ show expr ++ ";"
   show (ReturnStmt (Just expr)) = "return" ++ show expr ++ ";"
   show (ReturnStmt Nothing) = "return;"
-  show (WhileStmt condition stmt) = "while(" ++ show condition ++ ")" ++ show stmt
+  show (WhileStmt expr stmt) = "while(" ++ show expr ++ ")" ++ show stmt
   show (BlockStmt decls) = "{" ++ unwords (map show decls) ++ "}"
 
 
@@ -63,12 +63,12 @@ data Expr
 
 instance Show Expr where
     show (Assignment id expr) = id ++ "=" ++ show expr
-    show (LogicalOr expr1 expr2) = "(" ++ show expr1 ++ "||" ++ show expr2 ++ ")"
-    show (LogicalAnd expr1 expr2) = "(" ++ show expr1 ++ "&&" ++ show expr2  ++ ")"
-    show (Equality expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
-    show (Comparison expr1 operator expr2) = show expr1 ++ operator ++ show expr2
-    show (Term expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
-    show (Factor expr1 operator expr2) = "(" ++ show expr1 ++ operator ++ show expr2 ++ ")"
+    show (LogicalOr leftExpr rightExpr) = "(" ++ show leftExpr ++ "||" ++ show rightExpr ++ ")"
+    show (LogicalAnd leftExpr rightExpr) = "(" ++ show leftExpr ++ "&&" ++ show rightExpr  ++ ")"
+    show (Equality leftExpr operator rightExpr) = "(" ++ show leftExpr ++ operator ++ show rightExpr ++ ")"
+    show (Comparison leftExpr operator rightExpr) = show leftExpr ++ operator ++ show rightExpr
+    show (Term leftExpr operator rightExpr) = "(" ++ show leftExpr ++ operator ++ show rightExpr ++ ")"
+    show (Factor leftExpr operator rightExpr) = "(" ++ show leftExpr ++ operator ++ show rightExpr ++ ")"
     show (Unary operator expr) = "(" ++ operator ++ show expr ++ ")"
     show (Primary lit) = getLiteral lit
     show (Grouping expr) = "(" ++ show expr ++ ")"
