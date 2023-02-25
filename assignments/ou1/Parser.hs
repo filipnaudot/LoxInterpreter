@@ -16,7 +16,7 @@ import LoxGrammar       -- Import grammar/data types.
 -- Author: Filip Naudot (ens19fpt@cs.umu.se)
 --
 -- Version information:
---   2023-02-23: v1.0
+--   2023-02-25: v1.0
 --
 ---------------------------------------------------------
 ------------------------ Main ---------------------------
