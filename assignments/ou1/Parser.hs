@@ -27,6 +27,7 @@ parse tokens = let (decls, []) = buildDecls tokens
                in PROGRAM decls
 
 
+
 ---------------------------------------------------------
 --------------------- Declaration -----------------------
 ---------------------------------------------------------
@@ -49,6 +50,7 @@ buildDecl (token:tokens) =
          in (Statement stmt, rest')
 
 
+
 ---------------------------------------------------------
 ----------------- Variable declaration ------------------
 ---------------------------------------------------------
@@ -63,6 +65,7 @@ buildVariableDecl toks@(TOKEN IDENTIFIER _ (ID idStr) line : tokens) =
                                         _ -> error ("Expected semicolon after variable declaration on line " ++ show line)
     _ -> error ("Expected semicolon or equals sign after variable identifier on line " ++ show line)
 buildVariableDecl _ = error "Expected 'var' keyword followed by identifier"
+
 
 
 ---------------------------------------------------------
@@ -81,6 +84,7 @@ buildStatement (token:tokens) =
          in case rest' of
             TOKEN SEMICOLON _ _ _ : rest'' -> (ExprStmt exprStmt, rest'')
             _ -> error "Expected semicolon after expression statement"
+
 
 
 ---------------------------------------------------------
@@ -102,6 +106,7 @@ buildIfStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
 buildIfStatement _ = error "Expected 'if' keyword followed by '('"  
 
 
+
 ---------------------------------------------------------
 -------------------- Print statement --------------------
 ---------------------------------------------------------
@@ -112,6 +117,7 @@ buildPrintStatement (token:tokens) =
   in case rest of
     TOKEN SEMICOLON _ _ _ : rest' -> (PrintStmt printStmt, rest')
     _ -> error "Expected semicolon after print statement"
+
 
 
 ---------------------------------------------------------
@@ -130,6 +136,7 @@ buildReturnStatement toks@(token:tokens) =
     _ -> error "Expected semicolon after return statement"
 
 
+
 ---------------------------------------------------------
 -------------------- While statement -------------------
 ---------------------------------------------------------
@@ -143,6 +150,7 @@ buildWhileStatement toks@(TOKEN LEFT_PAREN _ _ _ : tokens) =
                                        in (WhileStmt exprStmt stmt, rest'')
     _ -> error "Expected closing ')' after while expression"
 buildWhileStatement _ = error "Expected '('  after while statement"
+
 
 
 ---------------------------------------------------------
@@ -173,7 +181,8 @@ buildExpr :: [Token] -> (Expr, [Token])
 buildExpr tokens = buildAssignment tokens
 
 
--- buildAssignment  - Builds an assignment statement. Checks
+
+-- buildAssignment  - Builds an assignment statement right-associative. Checks
 --                    for identifier followed by equal sign.
 --               
 -- Input:
@@ -191,8 +200,9 @@ buildAssignment (token:tokens) =
     _ -> buildLogicalOr (token:tokens)
 
 
--- buildLogicalOr - Builds logical or statement. Consists of 
---                  logical and statements on both sides.
+
+-- buildLogicalOr - Builds logical or statement left-associative using buildLogicalOrLeftAssoc.
+--                  Consists of logical and statements on both sides.
 --
 -- Input:
 --  [Token] - List of lox-tokens
@@ -200,20 +210,21 @@ buildAssignment (token:tokens) =
 buildLogicalOr :: [Token] -> (Expr, [Token])
 buildLogicalOr tokens =
   let (leftExpr, restTokens) = buildLogicalAnd tokens
-  in buildLogicalOrHelper leftExpr restTokens
+  in buildLogicalOrLeftAssoc leftExpr restTokens
 
-buildLogicalOrHelper :: Expr -> [Token] -> (Expr, [Token])
-buildLogicalOrHelper leftExpr tokens =
+buildLogicalOrLeftAssoc :: Expr -> [Token] -> (Expr, [Token])
+buildLogicalOrLeftAssoc leftExpr tokens =
   case tokens of
     (TOKEN OR _ _ _) : restTokens1 ->
       let (rightExpr, restTokens2) = buildLogicalAnd restTokens1
           combinedExpr = LogicalOr leftExpr rightExpr
-      in buildLogicalOrHelper combinedExpr restTokens2
+      in buildLogicalOrLeftAssoc combinedExpr restTokens2
     _ -> (leftExpr, tokens)
 
 
--- buildLogicalAnd - Builds logical and statement. Consists of 
---                   equality statements on both sides.
+
+-- buildLogicalAnd - Builds logical and statement left-associative using buildLogicalAndLeftAssoc.
+--                   Consists of equality statements on both sides.
 --               
 -- Input:
 --  [Token] - List of lox-tokens
@@ -221,20 +232,21 @@ buildLogicalOrHelper leftExpr tokens =
 buildLogicalAnd :: [Token] -> (Expr, [Token])
 buildLogicalAnd tokens = 
   let (left, restTokens) = buildEquality tokens
-  in buildLogicalAndHelper left restTokens
+  in buildLogicalAndLeftAssoc left restTokens
 
-buildLogicalAndHelper :: Expr -> [Token] -> (Expr, [Token])
-buildLogicalAndHelper leftExpr tokens =
+buildLogicalAndLeftAssoc :: Expr -> [Token] -> (Expr, [Token])
+buildLogicalAndLeftAssoc leftExpr tokens =
   case tokens of
     (TOKEN AND _ _ _) : restTokens1 ->
       let (rightExpr, restTokens2) = buildEquality restTokens1
           combinedExpr = LogicalAnd leftExpr rightExpr
-      in buildLogicalAndHelper combinedExpr restTokens2
+      in buildLogicalAndLeftAssoc combinedExpr restTokens2
     _ -> (leftExpr, tokens)
 
 
--- buildEquality  - Builds equality statement. Checks if it
---                  should evaluate equal or not equal.
+
+-- buildEquality  - Builds equality statement left-associative using buildEqualityLeftAssoc.
+--                  Checks if it should evaluate equal or not equal.
 --               
 -- Input:
 --  [Token] - List of lox-tokens
@@ -242,20 +254,23 @@ buildLogicalAndHelper leftExpr tokens =
 buildEquality :: [Token] -> (Expr, [Token])
 buildEquality tokens =
   let (leftExpr, restTokens) = buildComparison tokens
-  in buildEqualityHelper leftExpr restTokens
+  in buildEqualityLeftAssoc leftExpr restTokens
 
-buildEqualityHelper :: Expr -> [Token] -> (Expr, [Token])
-buildEqualityHelper leftExpr tokens =
+buildEqualityLeftAssoc :: Expr -> [Token] -> (Expr, [Token])
+buildEqualityLeftAssoc leftExpr tokens =
   case tokens of
-    (TOKEN BANG_EQUAL strBangEqual _ _) : restTokens -> let (rightExpr, restTokens2) = buildComparison restTokens
-                                                        in buildEqualityHelper (Equality leftExpr strBangEqual rightExpr) restTokens2
-    (TOKEN EQUAL_EQUAL strEqualEqual _ _) : restTokens -> let (rightExpr, restTokens2) = buildComparison restTokens
-                                                          in buildEqualityHelper (Equality leftExpr strEqualEqual rightExpr) restTokens2
+    (TOKEN BANG_EQUAL strBangEqual _ _) : restTokens -> 
+      let (rightExpr, restTokens2) = buildComparison restTokens
+      in buildEqualityLeftAssoc (Equality leftExpr strBangEqual rightExpr) restTokens2
+    (TOKEN EQUAL_EQUAL strEqualEqual _ _) : restTokens ->
+      let (rightExpr, restTokens2) = buildComparison restTokens
+      in buildEqualityLeftAssoc (Equality leftExpr strEqualEqual rightExpr) restTokens2
     _ -> (leftExpr, tokens)
 
 
--- buildComparison  - Builds comprison statement. A comprison can
---                    be one of the following >, >=, <, <=.
+
+-- buildComparison  - Builds comprison statement left-associative using buildComparisonLeftAssoc.
+--                    A comprison can be one of the following >, >=, <, <=.
 --               
 -- Input:
 --  [Token] - List of lox-tokens
@@ -263,50 +278,51 @@ buildEqualityHelper leftExpr tokens =
 buildComparison :: [Token] -> (Expr, [Token])
 buildComparison tokens =
   let (leftExpr, restTokens) = buildTerm tokens
-  in buildComparisonHelper leftExpr restTokens
+  in buildComparisonLeftAssoc leftExpr restTokens
 
-buildComparisonHelper :: Expr -> [Token] -> (Expr, [Token])
-buildComparisonHelper leftExpr tokens = case tokens of
+buildComparisonLeftAssoc :: Expr -> [Token] -> (Expr, [Token])
+buildComparisonLeftAssoc leftExpr tokens = case tokens of
   (TOKEN GREATER strGreater _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonHelper (Term leftExpr strGreater rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Term leftExpr strGreater rightExpr) restTokens2
   (TOKEN GREATER_EQUAL strGreaterEqual _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonHelper (Term leftExpr strGreaterEqual rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Term leftExpr strGreaterEqual rightExpr) restTokens2
   (TOKEN LESS strLess _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonHelper (Term leftExpr strLess rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Term leftExpr strLess rightExpr) restTokens2
   (TOKEN LESS_EQUAL strLessEqual _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonHelper (Term leftExpr strLessEqual rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Term leftExpr strLessEqual rightExpr) restTokens2
   _ -> (leftExpr, tokens)
 
-                                          
--- buildTerm  - Builds term. A term contains MINUS
---              for subtraction or PLUS for addition.
+
+
+-- buildTerm  - Builds term left-associative using buildTermLeftAssoc.
+--              A term contains MINUS for subtraction or PLUS for addition.
 --               
 -- Input:
 --  [Token] - List of lox-tokens
 -- Returns a Expr containing the Expr value and the rest of the tokens.
-
 buildTerm :: [Token] -> (Expr, [Token])
 buildTerm tokens =
   let (leftExpr, restTokens) = buildFactor tokens
-  in buildTermHelper leftExpr restTokens
+  in buildTermLeftAssoc leftExpr restTokens
 
-buildTermHelper :: Expr -> [Token] -> (Expr, [Token])
-buildTermHelper leftExpr tokens = case tokens of
+buildTermLeftAssoc :: Expr -> [Token] -> (Expr, [Token])
+buildTermLeftAssoc leftExpr tokens = case tokens of
   (TOKEN MINUS strMinus _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildFactor restTokens1
-    in buildTermHelper (Term leftExpr strMinus rightExpr) restTokens2
+    in buildTermLeftAssoc (Term leftExpr strMinus rightExpr) restTokens2
   (TOKEN PLUS strPlus _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildFactor restTokens1
-    in buildTermHelper (Term leftExpr strPlus rightExpr) restTokens2
+    in buildTermLeftAssoc (Term leftExpr strPlus rightExpr) restTokens2
   _ -> (leftExpr, tokens)
 
 
--- buildFactor - Builds factor statement. Consists of unary 
---               statement on the left side and a multiplication 
+
+-- buildFactor - Builds factor statement left-associative using buildFactorLeftAssoc.
+--               Consists of unary statement on the left side and a multiplication 
 --               or division on the right.
 --               
 -- Input:
@@ -315,19 +331,18 @@ buildTermHelper leftExpr tokens = case tokens of
 buildFactor :: [Token] -> (Expr, [Token])
 buildFactor tokens =
   let (leftExpr, restTokens) = buildUnary tokens
-  in buildFactorHelper leftExpr restTokens
+  in buildFactorLeftAssoc leftExpr restTokens
 
-buildFactorHelper :: Expr -> [Token] -> (Expr, [Token])
-buildFactorHelper leftExpr tokens = 
+buildFactorLeftAssoc :: Expr -> [Token] -> (Expr, [Token])
+buildFactorLeftAssoc leftExpr tokens = 
   case tokens of
     (TOKEN SLASH strSlash _ _) : restTokens1 -> 
       let (rightExpr, restTokens2) = buildUnary restTokens1
-      in buildFactorHelper (Factor leftExpr strSlash rightExpr) restTokens2
+      in buildFactorLeftAssoc (Factor leftExpr strSlash rightExpr) restTokens2
     (TOKEN STAR strStar _ _) : restTokens1 -> 
       let (rightExpr, restTokens2) = buildUnary restTokens1
-      in buildFactorHelper (Factor leftExpr strStar rightExpr) restTokens2
+      in buildFactorLeftAssoc (Factor leftExpr strStar rightExpr) restTokens2
     _ -> (leftExpr, tokens)
-
 
 
 
@@ -339,11 +354,14 @@ buildFactorHelper leftExpr tokens =
 buildUnary :: [Token] -> (Expr, [Token])
 buildUnary tokens =
   case tokens of
-    (TOKEN BANG strBang _ _) : restTokens1 -> let (unaryExpr, restTokens2) = buildUnary restTokens1
-                                              in (Unary strBang unaryExpr, restTokens2)
-    (TOKEN MINUS strMinus _ _) : restTokens1 -> let (unaryExpr, restTokens2) = buildUnary restTokens1
-                                                in (Unary strMinus unaryExpr, restTokens2)
+    (TOKEN BANG strBang _ _) : restTokens1 ->
+      let (unaryExpr, restTokens2) = buildUnary restTokens1
+      in (Unary strBang unaryExpr, restTokens2)
+    (TOKEN MINUS strMinus _ _) : restTokens1 ->
+      let (unaryExpr, restTokens2) = buildUnary restTokens1
+      in (Unary strMinus unaryExpr, restTokens2)
     _ -> buildPrimary tokens
+
 
 
 -- buildPrimary  - Builds primary. End point for expression.
