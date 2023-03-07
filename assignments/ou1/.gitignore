@@ -27,3 +27,4 @@ cabal.project.local~
 expressions.hs
 temp.txt
 tester
+lox
