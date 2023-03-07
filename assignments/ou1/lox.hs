@@ -14,9 +14,12 @@ data Value
     = IntValue Float
     | BoolValue Bool
     | StringValue String
+    | NilValue 
 
 instance Show Value where
     show (IntValue num) = show num
+    show (NilValue) = "nil"
+    show (StringValue str) = show str
 
 data Environment = ENVIRONMENT (Map.Map String Value) (Maybe Environment)
 
@@ -43,19 +46,22 @@ evalProgram (PROGRAM (decl : decls)) env output =
 
 
 evalDeclaration :: Declaration -> Environment -> [Char] -> (Environment, [Char])
---evalDeclaration (VariableDecl name maybeExpr) env output =
---  case maybeExpr of
---    Nothing -> (insertValue name "" env, output)
---    Just expr ->
---      let val = evalExpr expr env output
---      in (insertValue name val env, output)
+evalDeclaration (VariableDecl (ID name) maybeExpr) env output =
+  case maybeExpr of
+    Nothing -> (insertValue name NilValue env, output)
+    Just expr ->
+      let val = evalExpr expr env output
+      in (insertValue name val env, output)
 evalDeclaration (Statement stmt) env output = evalStatement stmt env output
 
 
 evalStatement :: Stmt -> Environment -> [Char] -> (Environment, [Char])
+evalStatement (PrintStmt expr) env output = 
+    let exprVal = evalExpr expr env output
+    in (env, output ++ (show exprVal) ++ "\n")
 evalStatement (ExprStmt expr) env output = 
     let exprVal = evalExpr expr env output
-    in (env, output ++ (show exprVal))
+    in (env, output)
 
 
 evalExpr :: Expr -> Environment -> [Char] -> Value
@@ -67,14 +73,15 @@ evalExpr (Term leftExpr op rightExpr) env output =
          case op of
            "+" -> IntValue (l + r)
            "-" -> IntValue (l - r)
-           _   -> error ("Unsupported operator: " ++ op)
        (StringValue l, StringValue r) ->
          case op of
            "+" -> StringValue (l ++ r)
-           _   -> error ("Unsupported operator: " ++ op)
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
-evalExpr (Primary (NUM num)) env output = IntValue num
-evalExpr (Primary (STR str)) env output = StringValue str
+evalExpr (Primary (NUM num)) _ output = IntValue num
+evalExpr (Primary (STR str)) _ output = StringValue str
+evalExpr (Primary (NIL_LIT)) _ output = NilValue
+evalExpr (Primary (ID var)) env output = lookupValue var env
+
 
 
 
@@ -89,3 +96,16 @@ evalExpr (Primary (STR str)) env output = StringValue str
 
 newEnvironment :: Environment
 newEnvironment = (ENVIRONMENT Map.empty Nothing)
+
+insertValue :: [Char] -> Value -> Environment -> Environment
+insertValue name val (ENVIRONMENT values parentEnv) =
+    ENVIRONMENT (Map.insert name val values) parentEnv 
+
+
+lookupValue :: [Char] -> Environment -> Value
+lookupValue name (ENVIRONMENT vars outer) =
+    case Map.lookup name vars of
+        Just val -> val
+        Nothing -> case outer of
+            Just env -> lookupValue name env
+            Nothing -> error ("Undefined variable '" ++ name ++ "'")
