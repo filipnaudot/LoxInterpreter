@@ -18,4 +18,6 @@ print a;                       // Expect: 5.0
 var b;
 print b=2;                     // Expect: 2.0
 print b;                       // Expect: 2.0
+print a=3*3;                   // Expect: 9.0
+print a-1;                     // Expect: 8.0
 
