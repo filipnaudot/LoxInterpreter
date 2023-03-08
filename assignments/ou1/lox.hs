@@ -50,62 +50,54 @@ evalDeclaration (VariableDecl (ID name) maybeExpr) env output =
   case maybeExpr of
     Nothing -> (insertValue name NilValue env, output)
     Just expr ->
-      let val = evalExpr expr env output
-      in (insertValue name val env, output)
+      let (env', val) = evalExpr expr env output
+      in (insertValue name val env', output)
 evalDeclaration (Statement stmt) env output = evalStatement stmt env output
 
 
 evalStatement :: Stmt -> Environment -> [Char] -> (Environment, [Char])
 evalStatement (PrintStmt expr) env output = 
-    let exprVal = evalExpr expr env output
-    in (env, output ++ (show exprVal) ++ "\n")
+    let (env', exprVal) = evalExpr expr env output
+    in (env', output ++ (show exprVal) ++ "\n")
 evalStatement (ExprStmt expr) env output =
-    case expr of
-        (Factor _ _ _) -> 
-            let exprVal = evalExpr expr env output
-            in (env, output)
-        (Term _ _ _) ->
-            let exprVal = evalExpr expr env output
-            in (env, output)
-        (Assignment _ _) ->
-            let env' = evalAssignment expr env output
-            in (env', output)
+    let (env', exprVal) = evalExpr expr env output
+    in (env', output)
 
 
-evalExpr :: Expr -> Environment -> [Char] -> (Value)
+
+evalExpr :: Expr -> Environment -> [Char] -> (Environment, Value)
+evalExpr (Assignment strId expr) env output =
+    let (env', val) = evalExpr expr env output
+    in (insertValue strId val env', val)
 evalExpr (Factor leftExpr op rightExpr) env output =
-  let leftVal = evalExpr leftExpr env output
-      rightVal = evalExpr rightExpr env output
+  let (env', leftVal) = evalExpr leftExpr env output
+      (env'', rightVal) = evalExpr rightExpr env' output
   in case (leftVal, rightVal) of
        (IntValue l, IntValue r) ->
          case op of
-           "*" -> IntValue (l * r)
-           "/" -> IntValue (l / r)
+           "*" -> (env, IntValue (l * r))
+           "/" -> (env, IntValue (l / r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
+
 evalExpr (Term leftExpr op rightExpr) env output =
-  let leftVal = evalExpr leftExpr env output
-      rightVal = evalExpr rightExpr env output
+  let (env', leftVal) = evalExpr leftExpr env output
+      (env'', rightVal) = evalExpr rightExpr env' output
   in case (leftVal, rightVal) of
        (IntValue l, IntValue r) ->
          case op of
-           "+" -> IntValue (l + r)
-           "-" -> IntValue (l - r)
-           "*" -> IntValue (l * r)
-           "/" -> IntValue (l / r)
+           "+" -> (env'', IntValue (l + r))
+           "-" -> (env'', IntValue (l - r))
+           "*" -> (env'', IntValue (l * r))
+           "/" -> (env'', IntValue (l / r))
        (StringValue l, StringValue r) ->
          case op of
-           "+" -> StringValue (l ++ r)
+           "+" -> (env'', StringValue (l ++ r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
-evalExpr (Primary (NUM num)) _ output = IntValue num
-evalExpr (Primary (STR str)) _ output = StringValue str
-evalExpr (Primary (NIL_LIT)) _ output = NilValue
-evalExpr (Primary (ID var)) env output = lookupValue var env
 
-
-evalAssignment :: Expr -> Environment -> [Char] -> Environment
-evalAssignment (Assignment strId expr) env output =
-    let val = evalExpr expr env output
-    in insertValue strId val env
+evalExpr (Primary (NUM num)) env output = (env, IntValue num)
+evalExpr (Primary (STR str)) env output = (env, StringValue str)
+evalExpr (Primary (NIL_LIT)) env output = (env, NilValue)
+evalExpr (Primary (ID var)) env output = (env, lookupValue var env)
 
 
 
