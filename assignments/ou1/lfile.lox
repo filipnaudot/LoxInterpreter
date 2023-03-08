@@ -1,7 +1,21 @@
-1+1-1-1-1;
-print 1+1-1-1-1;
-print 2;
-print "hej";
+1+1-1-1-1;                     // Expect: Nothing (no output)
+
+print 1+1+1+1+1-1;             // Expect: 4.0
+print 2*2;                     // Expect: 4.0
+print 8/2.0;                   // Expect: 4.0
+
+
+print "hej";                   // Expect: hej
+print "Fi"+"lip"+" "+"N";      // Expect: Filip N
+
+
 
 var a;
-print a;
+print a;                       // Expect: nil
+a = 5;
+print a;                       // Expect: 5.0
+
+var b;
+print b=2;                     // Expect: 2.0
+print b;                       // Expect: 2.0
+

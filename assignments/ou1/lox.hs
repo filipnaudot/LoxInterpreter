@@ -18,8 +18,8 @@ data Value
 
 instance Show Value where
     show (IntValue num) = show num
+    show (StringValue str) = str
     show (NilValue) = "nil"
-    show (StringValue str) = show str
 
 data Environment = ENVIRONMENT (Map.Map String Value) (Maybe Environment)
 
@@ -59,12 +59,29 @@ evalStatement :: Stmt -> Environment -> [Char] -> (Environment, [Char])
 evalStatement (PrintStmt expr) env output = 
     let exprVal = evalExpr expr env output
     in (env, output ++ (show exprVal) ++ "\n")
-evalStatement (ExprStmt expr) env output = 
-    let exprVal = evalExpr expr env output
-    in (env, output)
+evalStatement (ExprStmt expr) env output =
+    case expr of
+        (Factor _ _ _) -> 
+            let exprVal = evalExpr expr env output
+            in (env, output)
+        (Term _ _ _) ->
+            let exprVal = evalExpr expr env output
+            in (env, output)
+        (Assignment _ _) ->
+            let env' = evalAssignment expr env output
+            in (env', output)
 
 
-evalExpr :: Expr -> Environment -> [Char] -> Value
+evalExpr :: Expr -> Environment -> [Char] -> (Value)
+evalExpr (Factor leftExpr op rightExpr) env output =
+  let leftVal = evalExpr leftExpr env output
+      rightVal = evalExpr rightExpr env output
+  in case (leftVal, rightVal) of
+       (IntValue l, IntValue r) ->
+         case op of
+           "*" -> IntValue (l * r)
+           "/" -> IntValue (l / r)
+       _ -> error "Cannot apply arithmetic operation to non-numeric values"
 evalExpr (Term leftExpr op rightExpr) env output =
   let leftVal = evalExpr leftExpr env output
       rightVal = evalExpr rightExpr env output
@@ -73,6 +90,8 @@ evalExpr (Term leftExpr op rightExpr) env output =
          case op of
            "+" -> IntValue (l + r)
            "-" -> IntValue (l - r)
+           "*" -> IntValue (l * r)
+           "/" -> IntValue (l / r)
        (StringValue l, StringValue r) ->
          case op of
            "+" -> StringValue (l ++ r)
@@ -83,11 +102,10 @@ evalExpr (Primary (NIL_LIT)) _ output = NilValue
 evalExpr (Primary (ID var)) env output = lookupValue var env
 
 
-
-
-
-
-
+evalAssignment :: Expr -> Environment -> [Char] -> Environment
+evalAssignment (Assignment strId expr) env output =
+    let val = evalExpr expr env output
+    in insertValue strId val env
 
 
 
