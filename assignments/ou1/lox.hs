@@ -46,19 +46,23 @@ evalProgram (PROGRAM (decl : decls)) env output =
 
 
 evalDeclaration :: Declaration -> Environment -> [Char] -> (Environment, [Char])
+-- VARIABEL DECL
 evalDeclaration (VariableDecl (ID name) maybeExpr) env output =
   case maybeExpr of
     Nothing -> (insertValue name NilValue env, output)
     Just expr ->
       let (env', val) = evalExpr expr env output
       in (insertValue name val env', output)
+-- STATEMENT
 evalDeclaration (Statement stmt) env output = evalStatement stmt env output
 
 
 evalStatement :: Stmt -> Environment -> [Char] -> (Environment, [Char])
+-- PRINT
 evalStatement (PrintStmt expr) env output = 
     let (env', exprVal) = evalExpr expr env output
     in (env', output ++ (show exprVal) ++ "\n")
+-- EXPRESSION
 evalStatement (ExprStmt expr) env output =
     let (env', exprVal) = evalExpr expr env output
     in (env', output)
@@ -66,10 +70,13 @@ evalStatement (ExprStmt expr) env output =
 
 
 evalExpr :: Expr -> Environment -> [Char] -> (Environment, Value)
+-- ASSIGNMENT
 evalExpr (Assignment strId expr) env output =
     let (env', val) = evalExpr expr env output
     in (insertValue strId val env', val)
-evalExpr (Factor leftExpr op rightExpr) env output =
+
+-- BINARY - FACTOR
+evalExpr factor@(Factor leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
       (env'', rightVal) = evalExpr rightExpr env' output
   in case (leftVal, rightVal) of
@@ -79,7 +86,8 @@ evalExpr (Factor leftExpr op rightExpr) env output =
            "/" -> (env, IntValue (l / r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
 
-evalExpr (Term leftExpr op rightExpr) env output =
+-- BINARY - TERM
+evalExpr term@(Term leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
       (env'', rightVal) = evalExpr rightExpr env' output
   in case (leftVal, rightVal) of
@@ -94,6 +102,7 @@ evalExpr (Term leftExpr op rightExpr) env output =
            "+" -> (env'', StringValue (l ++ r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
 
+-- PRIMARY
 evalExpr (Primary (NUM num)) env output = (env, IntValue num)
 evalExpr (Primary (STR str)) env output = (env, StringValue str)
 evalExpr (Primary (NIL_LIT)) env output = (env, NilValue)
@@ -104,13 +113,15 @@ evalExpr (Primary (ID var)) env output = (env, lookupValue var env)
 
 
 
+---------------------------------------------------------------------
+-------------------------- ENV. FUNCIONS ----------------------------
+---------------------------------------------------------------------
 newEnvironment :: Environment
 newEnvironment = (ENVIRONMENT Map.empty Nothing)
 
 insertValue :: [Char] -> Value -> Environment -> Environment
 insertValue name val (ENVIRONMENT values parentEnv) =
     ENVIRONMENT (Map.insert name val values) parentEnv 
-
 
 lookupValue :: [Char] -> Environment -> Value
 lookupValue name (ENVIRONMENT vars outer) =
