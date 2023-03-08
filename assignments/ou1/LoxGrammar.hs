@@ -66,7 +66,7 @@ instance Show Expr where
     show (LogicalOr leftExpr rightExpr) = "(" ++ show leftExpr ++ "||" ++ show rightExpr ++ ")"
     show (LogicalAnd leftExpr rightExpr) = "(" ++ show leftExpr ++ "&&" ++ show rightExpr  ++ ")"
     show (Equality leftExpr operator rightExpr) = "(" ++ show leftExpr ++ operator ++ show rightExpr ++ ")"
-    show (Comparison leftExpr operator rightExpr) = show leftExpr ++ operator ++ show rightExpr
+    show (Comparison leftExpr operator rightExpr) = "(" ++ show leftExpr ++ operator ++ show rightExpr ++ ")"
     show (Term leftExpr operator rightExpr) = "(" ++ show leftExpr ++ operator ++ show rightExpr ++ ")"
     show (Factor leftExpr operator rightExpr) = "(" ++ show leftExpr ++ operator ++ show rightExpr ++ ")"
     show (Unary operator expr) = "(" ++ operator ++ show expr ++ ")"

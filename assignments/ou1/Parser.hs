@@ -284,16 +284,16 @@ buildComparisonLeftAssoc :: Expr -> [Token] -> (Expr, [Token])
 buildComparisonLeftAssoc leftExpr tokens = case tokens of
   (TOKEN GREATER strGreater _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonLeftAssoc (Term leftExpr strGreater rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Comparison leftExpr strGreater rightExpr) restTokens2
   (TOKEN GREATER_EQUAL strGreaterEqual _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonLeftAssoc (Term leftExpr strGreaterEqual rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Comparison leftExpr strGreaterEqual rightExpr) restTokens2
   (TOKEN LESS strLess _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonLeftAssoc (Term leftExpr strLess rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Comparison leftExpr strLess rightExpr) restTokens2
   (TOKEN LESS_EQUAL strLessEqual _ _) : restTokens1 ->
     let (rightExpr, restTokens2) = buildTerm restTokens1
-    in buildComparisonLeftAssoc (Term leftExpr strLessEqual rightExpr) restTokens2
+    in buildComparisonLeftAssoc (Comparison leftExpr strLessEqual rightExpr) restTokens2
   _ -> (leftExpr, tokens)
 
 
