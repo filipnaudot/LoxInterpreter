@@ -18,6 +18,8 @@ data Value
 
 instance Show Value where
     show (IntValue num) = show num
+    show (BoolValue True) = "true"
+    show (BoolValue False) = "false"
     show (StringValue str) = str
     show (NilValue) = "nil"
 
@@ -75,6 +77,19 @@ evalExpr (Assignment strId expr) env output =
     let (env', val) = evalExpr expr env output
     in (insertValue strId val env', val)
 
+-- BINARY - COMPARISON
+evalExpr comparison@(Comparison leftExpr op rightExpr) env output =
+  let (env', leftVal) = evalExpr leftExpr env output
+      (env'', rightVal) = evalExpr rightExpr env' output
+  in case (leftVal, rightVal) of
+       (IntValue l, IntValue r) ->
+         case op of
+           ">" -> (env'', BoolValue (l > r))
+           ">=" -> (env'', BoolValue (l >= r))
+           "<" -> (env'', BoolValue (l < r))
+           "<=" -> (env'', BoolValue (l <= r))
+       _ -> error "Cannot apply arithmetic operation to non-numeric values"
+
 -- BINARY - FACTOR
 evalExpr factor@(Factor leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
@@ -82,8 +97,8 @@ evalExpr factor@(Factor leftExpr op rightExpr) env output =
   in case (leftVal, rightVal) of
        (IntValue l, IntValue r) ->
          case op of
-           "*" -> (env, IntValue (l * r))
-           "/" -> (env, IntValue (l / r))
+           "*" -> (env'', IntValue (l * r))
+           "/" -> (env'', IntValue (l / r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
 
 -- BINARY - TERM
