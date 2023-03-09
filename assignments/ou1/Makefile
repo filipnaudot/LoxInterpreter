@@ -1,7 +1,10 @@
-default: clean tester
+default: clean_all lox clean
 
-tester:
-	@ghc --make -o Tester Tester.hs
+lox:
+	ghc -o lox lox.hs
 
 clean:
 	@rm -f *.hi *.o Tester
+
+clean_all:
+	@rm -f lox *.hi *.o Tester
