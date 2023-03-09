@@ -77,6 +77,14 @@ evalExpr (Assignment strId expr) env output =
     let (env', val) = evalExpr expr env output
     in (insertValue strId val env', val)
 
+evalExpr (LogicalOr leftExpr rightExpr) env output =
+  let (env', val) = evalExpr leftExpr env output
+  in if isTruthy val then (env', val) else evalExpr rightExpr env' output
+
+evalExpr (LogicalAnd leftExpr rightExpr) env output =
+  let (env', val) = evalExpr leftExpr env output
+  in if not (isTruthy val) then (env', val) else evalExpr rightExpr env' output
+
 -- BINARY - EQUALITY
 evalExpr equality@(Equality leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
@@ -130,6 +138,8 @@ evalExpr factor@(Factor leftExpr op rightExpr) env output =
            "/" -> (env'', IntValue (l / r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
 
+-- GROUPING
+evalExpr (Grouping expr) env output = evalExpr expr env output
 -- PRIMARY
 evalExpr (Primary (NUM num)) env output = (env, IntValue num)
 evalExpr (Primary (STR str)) env output = (env, StringValue str)
