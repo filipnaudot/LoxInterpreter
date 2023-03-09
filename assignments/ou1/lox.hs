@@ -77,19 +77,6 @@ evalExpr (Assignment strId expr) env output =
     let (env', val) = evalExpr expr env output
     in (insertValue strId val env', val)
 
--- BINARY - COMPARISON
-evalExpr comparison@(Comparison leftExpr op rightExpr) env output =
-  let (env', leftVal) = evalExpr leftExpr env output
-      (env'', rightVal) = evalExpr rightExpr env' output
-  in case (leftVal, rightVal) of
-       (IntValue l, IntValue r) ->
-         case op of
-           ">" -> (env'', BoolValue (l > r))
-           ">=" -> (env'', BoolValue (l >= r))
-           "<" -> (env'', BoolValue (l < r))
-           "<=" -> (env'', BoolValue (l <= r))
-       _ -> error "Cannot apply arithmetic operation to non-numeric values"
-
 -- BINARY - EQUALITY
 evalExpr equality@(Equality leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
@@ -104,16 +91,18 @@ evalExpr equality@(Equality leftExpr op rightExpr) env output =
         "==" -> (env'', BoolValue (l == r))
         "!=" -> (env'', BoolValue (l /= r))
     _ -> error "Cannot apply arithmetic operation to non-numeric values"
-
--- BINARY - FACTOR
-evalExpr factor@(Factor leftExpr op rightExpr) env output =
+  
+-- BINARY - COMPARISON
+evalExpr comparison@(Comparison leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
       (env'', rightVal) = evalExpr rightExpr env' output
   in case (leftVal, rightVal) of
        (IntValue l, IntValue r) ->
          case op of
-           "*" -> (env'', IntValue (l * r))
-           "/" -> (env'', IntValue (l / r))
+           ">" -> (env'', BoolValue (l > r))
+           ">=" -> (env'', BoolValue (l >= r))
+           "<" -> (env'', BoolValue (l < r))
+           "<=" -> (env'', BoolValue (l <= r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
 
 -- BINARY - TERM
@@ -128,6 +117,17 @@ evalExpr term@(Term leftExpr op rightExpr) env output =
        (StringValue l, StringValue r) ->
          case op of
            "+" -> (env'', StringValue (l ++ r))
+       _ -> error "Cannot apply arithmetic operation to non-numeric values"
+
+-- BINARY - FACTOR
+evalExpr factor@(Factor leftExpr op rightExpr) env output =
+  let (env', leftVal) = evalExpr leftExpr env output
+      (env'', rightVal) = evalExpr rightExpr env' output
+  in case (leftVal, rightVal) of
+       (IntValue l, IntValue r) ->
+         case op of
+           "*" -> (env'', IntValue (l * r))
+           "/" -> (env'', IntValue (l / r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
 
 -- PRIMARY
