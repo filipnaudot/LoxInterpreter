@@ -3,6 +3,7 @@ module Main where
 import System.Environment
 import System.IO
 import qualified Data.Map as Map
+import Data.Maybe
 
 import Tokens
 import LoxGrammar
@@ -60,14 +61,21 @@ evalDeclaration (Statement stmt) env output = evalStatement stmt env output
 
 
 evalStatement :: Stmt -> Environment -> [Char] -> (Environment, [Char])
--- PRINT
-evalStatement (PrintStmt expr) env output = 
-    let (env', exprVal) = evalExpr expr env output
-    in (env', output ++ (show exprVal) ++ "\n")
 -- EXPRESSION
 evalStatement (ExprStmt expr) env output =
     let (env', exprVal) = evalExpr expr env output
     in (env', output)
+
+-- IF
+evalStatement (IfStmt expr ifStmt elseStmt) env output =
+    let (env', exprVal) = evalExpr expr env output
+    in if isTruthy exprVal then evalStatement ifStmt env' output else
+      (if isNothing elseStmt then (env', output) else evalStatement (fromJust elseStmt) env' output)
+
+-- PRINT
+evalStatement (PrintStmt expr) env output = 
+    let (env', exprVal) = evalExpr expr env output
+    in (env', output ++ (show exprVal) ++ "\n")
 
 
 
