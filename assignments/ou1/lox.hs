@@ -43,8 +43,8 @@ main = do
 evalProgram :: Program -> Environment -> [Char] -> [Char]
 evalProgram (PROGRAM []) env output = output
 evalProgram (PROGRAM (decl : decls)) env output =
-  let (newEnv, newOutput) = evalDeclaration decl env output
-  in evalProgram (PROGRAM decls) newEnv newOutput
+  let (env', output') = evalDeclaration decl env output
+  in evalProgram (PROGRAM decls) env' output'
 
 
 
@@ -77,8 +77,24 @@ evalStatement (PrintStmt expr) env output =
     let (env', exprVal) = evalExpr expr env output
     in (env', output ++ (show exprVal) ++ "\n")
 
+-- WHILE
+evalStatement whileStmt@(WhileStmt expr stmt ) env output =
+  let (env', exprVal) = evalExpr expr env output
+  in if isTruthy exprVal
+    then let (env'', output') = evalStatement stmt env' output
+         in evalStatement (WhileStmt expr stmt) env'' output'
+    else (env', output)
+
+-- BLOCK
+evalStatement blockStmt@(BlockStmt decls) env output =
+  let env' = ENVIRONMENT Map.empty (Just env)
+  in (env, evalProgram (PROGRAM decls) env' output)
 
 
+
+
+
+-- EXPRESSION
 evalExpr :: Expr -> Environment -> [Char] -> (Environment, Value)
 -- ASSIGNMENT
 evalExpr (Assignment strId expr) env output =
