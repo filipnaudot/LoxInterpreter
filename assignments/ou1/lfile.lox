@@ -28,7 +28,10 @@ print 1>2;                     // Expect: false
 print 1>=2;                    // Expect: false
 print 1<2;                     // Expect: true
 print 1<=2;                    // Expect: true
-
-
+print 1==1;                    // Expect: true
+print 1==2;                    // Expect: false
+print false==true;             // Expect: false
+print false==false;            // Expect: true
 print "--------------------------------------------------";
+
 
