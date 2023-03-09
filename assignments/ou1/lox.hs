@@ -90,6 +90,21 @@ evalExpr comparison@(Comparison leftExpr op rightExpr) env output =
            "<=" -> (env'', BoolValue (l <= r))
        _ -> error "Cannot apply arithmetic operation to non-numeric values"
 
+-- BINARY - EQUALITY
+evalExpr equality@(Equality leftExpr op rightExpr) env output =
+  let (env', leftVal) = evalExpr leftExpr env output
+      (env'', rightVal) = evalExpr rightExpr env' output
+  in case (leftVal, rightVal) of
+    (IntValue l, IntValue r) ->
+      case op of
+        "==" -> (env'', BoolValue (l == r))
+        "!=" -> (env'', BoolValue (l /= r))
+    (BoolValue l, BoolValue r) ->
+      case op of
+        "==" -> (env'', BoolValue (l == r))
+        "!=" -> (env'', BoolValue (l /= r))
+    _ -> error "Cannot apply arithmetic operation to non-numeric values"
+
 -- BINARY - FACTOR
 evalExpr factor@(Factor leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
@@ -110,8 +125,6 @@ evalExpr term@(Term leftExpr op rightExpr) env output =
          case op of
            "+" -> (env'', IntValue (l + r))
            "-" -> (env'', IntValue (l - r))
-           "*" -> (env'', IntValue (l * r))
-           "/" -> (env'', IntValue (l / r))
        (StringValue l, StringValue r) ->
          case op of
            "+" -> (env'', StringValue (l ++ r))
@@ -121,10 +134,18 @@ evalExpr term@(Term leftExpr op rightExpr) env output =
 evalExpr (Primary (NUM num)) env output = (env, IntValue num)
 evalExpr (Primary (STR str)) env output = (env, StringValue str)
 evalExpr (Primary (NIL_LIT)) env output = (env, NilValue)
+evalExpr (Primary (TRUE_LIT)) env output = (env, BoolValue True)
+evalExpr (Primary (FALSE_LIT)) env output = (env, BoolValue False)
 evalExpr (Primary (ID var)) env output = (env, lookupValue var env)
 
 
 
+
+
+isTruthy :: Value -> Bool
+isTruthy NilValue = False
+isTruthy (BoolValue False) = False
+isTruthy _ = True
 
 
 
@@ -144,4 +165,4 @@ lookupValue name (ENVIRONMENT vars outer) =
         Just val -> val
         Nothing -> case outer of
             Just env -> lookupValue name env
-            Nothing -> error ("Undefined variable '" ++ name ++ "'")
+            Nothing -> error ("\nError: Undefined variable '" ++ name ++ "'\n")
