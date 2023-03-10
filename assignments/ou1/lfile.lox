@@ -119,3 +119,19 @@ var a = "global";
     print a;
     print b;
 }
+
+
+print "--------------------------------------------------";
+
+
+print ("a" == "a");
+print "a" != "b";
+print "a" == "b";
+print "a" == 1;
+print "a" > "b";                  // expect: false
+print "a" and "b" and "c" or "d"; // expect: c
+
+
+print "--------------------------------------------------";
+
+
