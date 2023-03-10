@@ -184,13 +184,10 @@ evalExpr (Primary (ID var)) env output = (env, lookupValue var env)
 
 
 
-
-
 isTruthy :: Value -> Bool
 isTruthy NilValue = False
 isTruthy (BoolValue False) = False
 isTruthy _ = True
-
 
 
 ---------------------------------------------------------------------
