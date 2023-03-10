@@ -119,20 +119,33 @@ evalExpr equality@(Equality leftExpr op rightExpr) env output =
       case op of
         "==" -> (env'', BoolValue (l == r))
         "!=" -> (env'', BoolValue (l /= r))
-    _ -> error "Cannot apply arithmetic operation to non-numeric values"
+    (StringValue l, StringValue r) ->
+      case op of
+        "==" -> (env'', BoolValue (l == r))
+        "!=" -> (env'', BoolValue (l /= r))
+    _ ->
+      case op of
+        "==" -> (env'', BoolValue False)
+        "!=" -> (env'', BoolValue True)
   
 -- BINARY - COMPARISON
 evalExpr comparison@(Comparison leftExpr op rightExpr) env output =
   let (env', leftVal) = evalExpr leftExpr env output
       (env'', rightVal) = evalExpr rightExpr env' output
   in case (leftVal, rightVal) of
-       (IntValue l, IntValue r) ->
-         case op of
-           ">" -> (env'', BoolValue (l > r))
-           ">=" -> (env'', BoolValue (l >= r))
-           "<" -> (env'', BoolValue (l < r))
-           "<=" -> (env'', BoolValue (l <= r))
-       _ -> error "Cannot apply arithmetic operation to non-numeric values"
+    (IntValue l, IntValue r) ->
+      case op of
+        ">" -> (env'', BoolValue (l > r))
+        ">=" -> (env'', BoolValue (l >= r))
+        "<" -> (env'', BoolValue (l < r))
+        "<=" -> (env'', BoolValue (l <= r))
+    (StringValue l, StringValue r) ->
+      case op of
+        ">" -> (env'', BoolValue (l > r))
+        ">=" -> (env'', BoolValue (l >= r))
+        "<" -> (env'', BoolValue (l < r))
+        "<=" -> (env'', BoolValue (l <= r))
+    _ -> error "Error: Cannot apply comparison operation to values of different types \n"
 
 -- BINARY - TERM
 evalExpr term@(Term leftExpr op rightExpr) env output =
@@ -146,7 +159,7 @@ evalExpr term@(Term leftExpr op rightExpr) env output =
        (StringValue l, StringValue r) ->
          case op of
            "+" -> (env'', StringValue (l ++ r))
-       _ -> error "Cannot apply arithmetic operation to non-numeric values"
+       _ -> error "Error: Cannot apply term operation to values of different types \n"
 
 -- BINARY - FACTOR
 evalExpr factor@(Factor leftExpr op rightExpr) env output =
@@ -157,7 +170,7 @@ evalExpr factor@(Factor leftExpr op rightExpr) env output =
          case op of
            "*" -> (env'', IntValue (l * r))
            "/" -> (env'', IntValue (l / r))
-       _ -> error "Cannot apply arithmetic operation to non-numeric values"
+       _ -> error "\nError: Can only apply factor operation to values numerical values \n"
 
 -- GROUPING
 evalExpr (Grouping expr) env output = evalExpr expr env output
