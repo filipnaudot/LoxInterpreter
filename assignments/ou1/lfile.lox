@@ -91,6 +91,8 @@ if (false) if (true) print "bad"; else print "bad";
 
 print "--------------------------------------------------";
 
+
+var q;
 var q = 0;
 if(true){
     print "In block";
