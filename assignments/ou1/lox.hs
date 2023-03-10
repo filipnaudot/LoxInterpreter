@@ -35,13 +35,13 @@ main = do
             contents <- readFile filename
             let tokens = scanTokens contents
             let program = parse tokens
-            let output = evalProgram program newEnvironment []
+            let (_, output) = evalProgram program newEnvironment []
             putStrLn output
         _ -> putStrLn "Usage: lox <filename.lox>"
 
 
-evalProgram :: Program -> Environment -> [Char] -> [Char]
-evalProgram (PROGRAM []) env output = output
+evalProgram :: Program -> Environment -> [Char] -> (Environment, [Char])
+evalProgram (PROGRAM []) env output = (env, output)
 evalProgram (PROGRAM (decl : decls)) env output =
   let (env', output') = evalDeclaration decl env output
   in evalProgram (PROGRAM decls) env' output'
@@ -87,19 +87,16 @@ evalStatement whileStmt@(WhileStmt expr stmt ) env output =
 
 -- BLOCK
 evalStatement blockStmt@(BlockStmt decls) env output =
-  let env' = ENVIRONMENT Map.empty (Just env)
-  in (env, evalProgram (PROGRAM decls) env' output)
-
-
-
-
+  let ((ENVIRONMENT _ (Just env')), output') = evalProgram (PROGRAM decls) (ENVIRONMENT Map.empty (Just env)) output
+  in (env', output')
+  
 
 -- EXPRESSION
 evalExpr :: Expr -> Environment -> [Char] -> (Environment, Value)
 -- ASSIGNMENT
 evalExpr (Assignment strId expr) env output =
     let (env', val) = evalExpr expr env output
-    in (insertValue strId val env', val)
+    in (assignValue strId val env', val)
 
 evalExpr (LogicalOr leftExpr rightExpr) env output =
   let (env', val) = evalExpr leftExpr env output
@@ -189,14 +186,29 @@ isTruthy _ = True
 newEnvironment :: Environment
 newEnvironment = (ENVIRONMENT Map.empty Nothing)
 
+
 insertValue :: [Char] -> Value -> Environment -> Environment
-insertValue name val (ENVIRONMENT values parentEnv) =
-    ENVIRONMENT (Map.insert name val values) parentEnv 
+insertValue name val environment@(ENVIRONMENT values parentEnv) =
+  case parentEnv of
+    Nothing -> (ENVIRONMENT (Map.insert name val values) parentEnv)
+    Just _ -> case Map.lookup name values of
+      Nothing -> (ENVIRONMENT (Map.insert name val values) parentEnv)
+      Just _ -> error ("\nError: Redeclaring variable '" ++ name ++ "'\n")
+
+
+assignValue :: [Char] -> Value -> Environment -> Environment
+assignValue name val environment@(ENVIRONMENT values parentEnv) =
+  case Map.lookup name values of
+    Just _ -> (ENVIRONMENT (Map.insert name val values) parentEnv)
+    Nothing -> case parentEnv of
+      Just env -> (ENVIRONMENT values (Just (assignValue name val env)))
+      Nothing -> error ("\nError: Assignment to undefined variable '" ++ name ++ "'\n")
+
 
 lookupValue :: [Char] -> Environment -> Value
-lookupValue name (ENVIRONMENT vars outer) =
-    case Map.lookup name vars of
-        Just val -> val
-        Nothing -> case outer of
-            Just env -> lookupValue name env
-            Nothing -> error ("\nError: Undefined variable '" ++ name ++ "'\n")
+lookupValue name (ENVIRONMENT values outer) =
+  case Map.lookup name values of
+    Just val -> val
+    Nothing -> case outer of
+      Just env -> lookupValue name env
+      Nothing -> error ("\nError: Undefined variable '" ++ name ++ "'\n")
