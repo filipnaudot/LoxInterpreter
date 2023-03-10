@@ -91,9 +91,29 @@ if (false) if (true) print "bad"; else print "bad";
 
 print "--------------------------------------------------";
 
+var q = 0;
 if(true){
-    print "block";
+    print "In block";
+    var l = 10;
+    print l;
+    print "In block";
+    q = 9;
 }
-//var i = 0;
-//while(i<2) {i = 5;}
-//print "after";
+print "After block";
+print q;
+
+var i = 0;
+while(i<2) {i = i+1;}
+print "after";
+
+var a = "global";
+
+{
+    var b = "inner";
+    {
+        a = "inner inner";
+        b = "inner inner";
+    }
+    print a;
+    print b;
+}
