@@ -18,7 +18,8 @@ data Value
     | NilValue 
 
 instance Show Value where
-    show (IntValue num) = show num
+    show (IntValue num) = showInt num
+        where showInt n = if n == fromInteger (round n) then show (round n) else show n
     show (BoolValue True) = "true"
     show (BoolValue False) = "false"
     show (StringValue str) = str
@@ -171,6 +172,16 @@ evalExpr factor@(Factor leftExpr op rightExpr) env output =
            "*" -> (env'', IntValue (l * r))
            "/" -> (env'', IntValue (l / r))
        _ -> error "\nError: Can only apply factor operation to values numerical values \n"
+
+-- UNARY
+evalExpr unary@(Unary str expr) env output =
+  let (env', val) = evalExpr expr env output
+  in case str of
+    "!" -> (env', BoolValue (not (isTruthy val)))
+    "-" -> 
+      case val of
+        (IntValue val) -> (env', IntValue (negate val))
+        _ -> error ("\n Error: Tried to negate '" ++ show val ++ "' but can only negate numbers \n")
 
 -- GROUPING
 evalExpr (Grouping expr) env output = evalExpr expr env output
