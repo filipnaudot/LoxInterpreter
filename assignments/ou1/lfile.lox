@@ -122,7 +122,7 @@ var a = "global";
 
 
 print "--------------------------------------------------";
-
+// Test Camparison
 
 print ("a" == "a");
 print "a" != "b";
@@ -133,5 +133,12 @@ print "a" and "b" and "c" or "d"; // expect: c
 
 
 print "--------------------------------------------------";
+// Test Unary
+
+print !2.02;
+print !true;
+print !false;
+print -(1-2);
 
 
+print "--------------------------------------------------";
