@@ -4,6 +4,7 @@ import System.Environment
 import System.IO
 import qualified Data.Map as Map
 import Data.Maybe
+import Data.List
 
 import Tokens
 import LoxGrammar
@@ -18,12 +19,15 @@ data Value
     | NilValue 
 
 instance Show Value where
-    show (IntValue num) = showInt num
-        where showInt n = if n == fromInteger (round n) then show (round n) else show n
-    show (BoolValue True) = "true"
-    show (BoolValue False) = "false"
-    show (StringValue str) = str
-    show (NilValue) = "nil"
+  show (IntValue num) =
+    let numStr = (show num)
+    in if isSuffixOf ".0" numStr
+      then take (length numStr - 2) numStr
+      else numStr
+  show (BoolValue True) = "true"
+  show (BoolValue False) = "false"
+  show (StringValue str) = str
+  show (NilValue) = "nil"
 
 data Environment = ENVIRONMENT (Map.Map String Value) (Maybe Environment)
 
