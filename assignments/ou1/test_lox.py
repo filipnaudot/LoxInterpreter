@@ -106,6 +106,13 @@ test_reassign_expected_output = [
     "arg",
 ]
 
+test_local_expected_output = [
+    "before",
+    "after",
+    "arg",
+    "arg",
+]
+
 test_redeclare_expected_output = [
     "lox.hs: Error: Redeclaring variable 'in_if'",
 ]
@@ -125,6 +132,7 @@ tests = [
     ("TestMiscExpr.lox", test_misc_expr_expected_output),
     ("TestAssociativity.lox", test_associativity_expected_output),
     ("TestReassign.lox", test_reassign_expected_output),
+    ("TestLocal.lox", test_local_expected_output),
     # -------------------- Error tests ------------------------------
     ("TestRedeclare.lox", test_redeclare_expected_output),
     ]

@@ -156,11 +156,13 @@ print -0.001;  // expect: -0.001
 print "--------------------------------------------------";
 print "--------------------------------------------------";
 
-var a = "before";
-print a;            // expect: before
+{
+  var a = "before";
+  print a; // expect: before
 
-a = "after";
-print a;            // expect: after
+  a = "after";
+  print a; // expect: after
 
-print a = "arg";    // expect: arg
-print a;            // expect: arg
+  print a = "arg"; // expect: arg
+  print a; // expect: arg
+}
