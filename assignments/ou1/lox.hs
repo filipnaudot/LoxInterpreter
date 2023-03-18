@@ -80,7 +80,9 @@ evalStatement (IfStmt expr ifStmt elseStmt) env output =
 -- PRINT
 evalStatement (PrintStmt expr) env output = 
     let (env', exprVal) = evalExpr expr env output
-    in (env', output ++ (show exprVal) ++ "\n")
+    in case output of
+      [] -> (env', output ++ (show exprVal))
+      _ -> (env', (output ++ "\n" ++ (show exprVal)))
 
 -- WHILE
 evalStatement whileStmt@(WhileStmt expr stmt ) env output =
