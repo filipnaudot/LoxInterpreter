@@ -1,0 +1,6 @@
+// Test Unary
+
+print !2.02;    // expect: False
+print !true;    // expect: False
+print !false;   // expect: True
+print -(1-2);   // expect: 1
