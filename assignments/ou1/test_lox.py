@@ -71,6 +71,9 @@ test_if_expected_output = [
     "In if-block",
     "10",
     "9",
+    "good",
+    "good",
+    "block",
 ]
 
 test_dangling_expected_output = [
