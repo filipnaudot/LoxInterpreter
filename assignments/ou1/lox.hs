@@ -11,7 +11,18 @@ import LoxGrammar
 import Scanner
 import Parser
 
+--
+-- Lox interpreter.
+--
+-- Author: Filip Naudot (ens19fpt@cs.umu.se)
+--
+-- Version information:
+--   2023-03-18: v1.0
+--
 
+--------------------------------------------
+----------- Define data types --------------
+--------------------------------------------
 data Value
     = IntValue Float
     | BoolValue Bool
@@ -29,9 +40,15 @@ instance Show Value where
   show (StringValue str) = str
   show (NilValue) = "nil"
 
+
 data Environment = ENVIRONMENT (Map.Map String Value) (Maybe Environment)
 
 
+--------------------------------------------
+---------------- lox - main ----------------
+--------------------------------------------
+-- Checks if correct num of args, and runs
+-- scanner and parser before interpreting.
 main :: IO ()
 main = do
     args <- getArgs
@@ -45,6 +62,12 @@ main = do
         _ -> putStrLn "Usage: lox <filename.lox>"
 
 
+-- evalProgram  - Evaluates each declaration.
+-- Input:
+--  Program     - List of declarations from parser.
+--  Environment - The current environment.
+--  [Char]      - output string. 
+-- Returns a tuple with current environment and the output string.
 evalProgram :: Program -> Environment -> [Char] -> (Environment, [Char])
 evalProgram (PROGRAM []) env output = (env, output)
 evalProgram (PROGRAM (decl : decls)) env output =
@@ -52,7 +75,12 @@ evalProgram (PROGRAM (decl : decls)) env output =
   in evalProgram (PROGRAM decls) env' output'
 
 
-
+-- evalDeclaration - Evaluates a declaration.
+-- Input:
+--  Declaration    - The declaration to evaluate.
+--  Environment    - The current environment.
+--  [Char]         - output string. 
+-- Returns a tuple with current environment and the output string.
 evalDeclaration :: Declaration -> Environment -> [Char] -> (Environment, [Char])
 -- VARIABEL DECL
 evalDeclaration (VariableDecl (ID name) maybeExpr) env output =
@@ -65,6 +93,12 @@ evalDeclaration (VariableDecl (ID name) maybeExpr) env output =
 evalDeclaration (Statement stmt) env output = evalStatement stmt env output
 
 
+-- evalStatement   - Evaluates a statement.
+-- Input:
+--  Stmt           - The statement to evaluate.
+--  Environment    - The current environment.
+--  [Char]         - output string. 
+-- Returns a tuple with current environment and the output string
 evalStatement :: Stmt -> Environment -> [Char] -> (Environment, [Char])
 -- EXPRESSION
 evalStatement (ExprStmt expr) env output =
@@ -98,17 +132,23 @@ evalStatement blockStmt@(BlockStmt decls) env output =
   in (env', output')
   
 
--- EXPRESSION
+-- evalExpr        - Evaluates an expression.
+-- Input:
+--  Expr           - The expression to evaluate.
+--  Environment    - The current environment.
+--  [Char]         - output string. 
+-- Returns a tuple with current environment and the output string
 evalExpr :: Expr -> Environment -> [Char] -> (Environment, Value)
 -- ASSIGNMENT
 evalExpr (Assignment strId expr) env output =
     let (env', val) = evalExpr expr env output
     in (assignValue strId val env', val)
 
+-- LOGICAL OR
 evalExpr (LogicalOr leftExpr rightExpr) env output =
   let (env', val) = evalExpr leftExpr env output
   in if isTruthy val then (env', val) else evalExpr rightExpr env' output
-
+-- LOGICAL AND
 evalExpr (LogicalAnd leftExpr rightExpr) env output =
   let (env', val) = evalExpr leftExpr env output
   in if not (isTruthy val) then (env', val) else evalExpr rightExpr env' output
@@ -191,6 +231,7 @@ evalExpr unary@(Unary str expr) env output =
 
 -- GROUPING
 evalExpr (Grouping expr) env output = evalExpr expr env output
+
 -- PRIMARY
 evalExpr (Primary (NUM num)) env output = (env, IntValue num)
 evalExpr (Primary (STR str)) env output = (env, StringValue str)
@@ -201,6 +242,15 @@ evalExpr (Primary (ID var)) env output = (env, lookupValue var env)
 
 
 
+
+---------------------------------------------------------------------
+----------------------- HELPER FUNCIONS -----------------------------
+---------------------------------------------------------------------
+-- isTruthy        - Determines if a value is truthy or not.
+--                   All values except nil and false are truthy.
+-- Input:
+--  Value          - The value to inspect.
+-- Returns the truthiness of the value.
 isTruthy :: Value -> Bool
 isTruthy NilValue = False
 isTruthy (BoolValue False) = False
@@ -210,10 +260,18 @@ isTruthy _ = True
 ---------------------------------------------------------------------
 -------------------------- ENV. FUNCIONS ----------------------------
 ---------------------------------------------------------------------
+-- newEnvironment  - Creates a new (empty) environment.
+--
+-- Returns the new environment.
 newEnvironment :: Environment
 newEnvironment = (ENVIRONMENT Map.empty Nothing)
 
-
+-- insertValue     - Inserts a new key-value pair in the namespace.
+-- Input:
+--  [Char]         - Key for the value.
+--  Value          - The value to insert.
+--  Environment    - Environment containing the namespace.
+-- Returns the new environment with updated namespace.
 insertValue :: [Char] -> Value -> Environment -> Environment
 insertValue name val environment@(ENVIRONMENT values parentEnv) =
   case parentEnv of
@@ -222,7 +280,12 @@ insertValue name val environment@(ENVIRONMENT values parentEnv) =
       Nothing -> (ENVIRONMENT (Map.insert name val values) parentEnv)
       Just _ -> error ("\nError: Redeclaring variable '" ++ name ++ "'\n")
 
-
+-- assignValue     - Updates a key-value pair in the namespace.
+-- Input:
+--  [Char]         - Key for the value.
+--  Value          - The value to be added.
+--  Environment    - Environment containing the namespace.
+-- Returns the new environment with updated namespace.
 assignValue :: [Char] -> Value -> Environment -> Environment
 assignValue name val environment@(ENVIRONMENT values parentEnv) =
   case Map.lookup name values of
@@ -231,7 +294,11 @@ assignValue name val environment@(ENVIRONMENT values parentEnv) =
       Just env -> (ENVIRONMENT values (Just (assignValue name val env)))
       Nothing -> error ("\nError: Assignment to undefined variable '" ++ name ++ "'\n")
 
-
+-- lookupValue     - Lookup on a key-value pair. 
+-- Input:
+-- [Char]          - Key for the value.
+-- Environment     - Environment containing the namespace.
+-- Returns the value associated with the key.
 lookupValue :: [Char] -> Environment -> Value
 lookupValue name (ENVIRONMENT values outer) =
   case Map.lookup name values of
