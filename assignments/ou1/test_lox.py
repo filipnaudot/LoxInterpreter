@@ -30,12 +30,23 @@ test_unary_expected_output = [
 ]
 
 test_comparison_expected_output = [
+    "false",
+    "false",
+    "true",
+    "true",
+    "true",
+    "false",
+    "false",
+    "true",
+    "true",
+    #
     "true",
     "true",
     "false",
     "false",
     "false",
     "c",
+    #
     "1",
     "1",
     "true",

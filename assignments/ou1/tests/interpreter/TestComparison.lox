@@ -1,5 +1,15 @@
 // Test Camparison
 
+print 1>2;                        // Expect: false
+print 1>=2;                       // Expect: false
+print 1<2;                        // Expect: true
+print 1<=2;                       // Expect: true
+print 1==1;                       // Expect: true
+print 1==2;                       // Expect: false
+print false==true;                // Expect: false
+print false==false;               // Expect: true
+print true==true;                 // Expect: true
+
 print ("a" == "a");               // expect: true
 print "a" != "b";                 // expect: true
 print "a" == "b";                 // expect: false
