@@ -36,6 +36,13 @@ test_comparison_expected_output = [
     "false",
     "false",
     "c",
+    "1",
+    "1",
+    "true",
+    "false",
+    "false",
+    "false",
+    "true",
 ]
 
 test_scope_expected_output = [
