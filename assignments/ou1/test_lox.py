@@ -93,12 +93,19 @@ test_misc_expr_expected_output = [
     "4.5",
 ]
 
+test_associativity_expected_output = [
+    "c",
+    "c",
+    "c",
+]
+
 test_redeclare_expected_output = [
     "lox.hs: Error: Redeclaring variable 'in_if'",
 ]
 
 
 tests = [
+    # --------------- Correct input tests ---------------------------
     ("TestPrintStr.lox", test_print_str_expected_output),
     ("TestPrintNum.lox", test_print_num_expected_output),
     ("TestUnary.lox", test_unary_expected_output),
@@ -109,6 +116,8 @@ tests = [
     ("TestDangling.lox", test_dangling_expected_output),
     ("TestVar.lox", test_var_expected_output),
     ("TestMiscExpr.lox", test_misc_expr_expected_output),
+    ("TestAssociativity.lox", test_associativity_expected_output),
+    # -------------------- Error tests ------------------------------
     ("TestRedeclare.lox", test_redeclare_expected_output),
     ]
 

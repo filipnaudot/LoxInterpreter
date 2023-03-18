@@ -154,10 +154,14 @@ print -0.001;  // expect: -0.001
 
 
 print "--------------------------------------------------";
+print "--------------------------------------------------";
 
-var before_if = 1;
-var before_if;
-if (true) {
-    var in_if;
-    var in_if = 1;
-}
+var a = "a";
+var b = "b";
+var c = "c";
+
+// Assignment is right-associative.
+a = b = c;
+print a; // expect: c
+print b; // expect: c
+print c; // expect: c
