@@ -97,6 +97,8 @@ test_associativity_expected_output = [
     "c",
     "c",
     "c",
+    "var",
+    "var",
 ]
 
 test_reassign_expected_output = [

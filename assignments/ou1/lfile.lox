@@ -156,13 +156,8 @@ print -0.001;  // expect: -0.001
 print "--------------------------------------------------";
 print "--------------------------------------------------";
 
-{
-  var a = "before";
-  print a; // expect: before
-
-  a = "after";
-  print a; // expect: after
-
-  print a = "arg"; // expect: arg
-  print a; // expect: arg
-}
+// Assignment on RHS of variable.
+var a = "before";
+var c = a = "var";
+print a; // expect: var
+print c; // expect: var
