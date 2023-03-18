@@ -147,6 +147,22 @@ test_truthy_expected_output = [
     "empty",
 ]
 
+test_precedence_expected_output = [
+    "14",
+    "8",
+    "4",
+    "0",
+    "true",
+    "true",
+    "true",
+    "true",
+    "0",
+    "0",
+    "0",
+    "0",
+    "4",
+]
+
 test_redeclare_expected_output = [
     "lox.hs: Error: Redeclaring variable 'in_if'",
 ]
@@ -168,6 +184,7 @@ tests = [
     ("TestReassign.lox", test_reassign_expected_output),
     ("TestLocal.lox", test_local_expected_output),
     ("TestEquality.lox", test_equality_expected_output),
+    ("TestPrecedence.lox", test_precedence_expected_output),
     ("TestTruthy.lox", test_truthy_expected_output),
     # -------------------- Error tests ------------------------------
     ("TestRedeclare.lox", test_redeclare_expected_output),
