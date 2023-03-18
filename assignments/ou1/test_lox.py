@@ -77,6 +77,15 @@ test_dangling_expected_output = [
     "good",
 ]
 
+test_var_expected_output = [
+    "nil",
+    "5",
+    "2",
+    "2",
+    "9",
+    "8",
+]
+
 
 #test_missing_expr_if_expected_output = [
 #    "TestNoExprIf.hs: Missing expression for if-statement on line 1",
@@ -92,6 +101,7 @@ tests = [
     ("TestWhile.lox", test_while_expected_output),
     ("TestIf.lox", test_if_expected_output),
     ("TestDangling.lox", test_dangling_expected_output),
+    ("TestVar.lox", test_var_expected_output),
     ]
 
 

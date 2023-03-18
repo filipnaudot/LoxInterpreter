@@ -1,0 +1,12 @@
+var a = 1;
+// Allow redeclaration in global scope
+var a;
+print a;                       // Expect: nil
+a = 5;
+print a;                       // Expect: 5
+
+var b;
+print b=2;                     // Expect: 2
+print b;                       // Expect: 2
+print a=3*3;                   // Expect: 9
+print a-1;                     // Expect: 8
