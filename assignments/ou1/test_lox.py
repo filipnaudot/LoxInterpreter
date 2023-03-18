@@ -43,8 +43,21 @@ test_scope_expected_output = [
     "inner inner",
 ]
 
+test_while_expected_output = [
+    "1",
+    "2",
+    "3",
+]
 
+test_if_expected_output = [
+    "In if-block",
+    "10",
+    "9",
+]
 
+test_dangling_expected_output = [
+    "good",
+]
 
 
 #test_missing_expr_if_expected_output = [
@@ -58,6 +71,9 @@ tests = [
     ("TestUnary.lox", test_unary_expected_output),
     ("TestComparison.lox", test_comparison_expected_output),
     ("TestScope.lox", test_scope_expected_output),
+    ("TestWhile.lox", test_while_expected_output),
+    ("TestIf.lox", test_if_expected_output),
+    ("TestDangling.lox", test_dangling_expected_output),
     ]
 
 

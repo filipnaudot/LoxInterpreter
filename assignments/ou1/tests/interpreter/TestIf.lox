@@ -1,0 +1,10 @@
+var q = 0;
+if(true) {
+    print "In if-block";
+    
+    var l = 10;
+    print l;
+
+    q = 9;
+}
+print q;
