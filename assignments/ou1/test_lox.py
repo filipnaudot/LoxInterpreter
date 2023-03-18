@@ -115,6 +115,27 @@ test_local_expected_output = [
     "arg",
 ]
 
+test_equality_expected_output = [
+    "true",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "true",
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+]
+
 test_redeclare_expected_output = [
     "lox.hs: Error: Redeclaring variable 'in_if'",
 ]
@@ -135,6 +156,7 @@ tests = [
     ("TestAssociativity.lox", test_associativity_expected_output),
     ("TestReassign.lox", test_reassign_expected_output),
     ("TestLocal.lox", test_local_expected_output),
+    ("TestEquality.lox", test_equality_expected_output),
     # -------------------- Error tests ------------------------------
     ("TestRedeclare.lox", test_redeclare_expected_output),
     ]
