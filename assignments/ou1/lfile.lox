@@ -154,3 +154,10 @@ print -0.001;  // expect: -0.001
 
 
 print "--------------------------------------------------";
+
+var before_if = 1;
+var before_if;
+if (true) {
+    var in_if;
+    var in_if = 1;
+}

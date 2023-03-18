@@ -93,10 +93,9 @@ test_misc_expr_expected_output = [
     "4.5",
 ]
 
-
-#test_missing_expr_if_expected_output = [
-#    "TestNoExprIf.hs: Missing expression for if-statement on line 1",
-#]
+test_redeclare_expected_output = [
+    "lox.hs: Error: Redeclaring variable 'in_if'",
+]
 
 
 tests = [
@@ -110,6 +109,7 @@ tests = [
     ("TestDangling.lox", test_dangling_expected_output),
     ("TestVar.lox", test_var_expected_output),
     ("TestMiscExpr.lox", test_misc_expr_expected_output),
+    ("TestRedeclare.lox", test_redeclare_expected_output),
     ]
 
 
@@ -134,7 +134,7 @@ def run_test(test_name):
     #print(output)
     if error != "":
         #print(str(error), end='')
-        output = error
+        output = str(error).replace("\n", "", 1)
 
     return output
 
