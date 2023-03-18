@@ -86,6 +86,13 @@ test_var_expected_output = [
     "8",
 ]
 
+test_misc_expr_expected_output = [
+    "4",
+    "4",
+    "4",
+    "4.5",
+]
+
 
 #test_missing_expr_if_expected_output = [
 #    "TestNoExprIf.hs: Missing expression for if-statement on line 1",
@@ -102,6 +109,7 @@ tests = [
     ("TestIf.lox", test_if_expected_output),
     ("TestDangling.lox", test_dangling_expected_output),
     ("TestVar.lox", test_var_expected_output),
+    ("TestMiscExpr.lox", test_misc_expr_expected_output),
     ]
 
 
