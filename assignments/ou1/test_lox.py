@@ -29,6 +29,20 @@ test_unary_expected_output = [
     "1",
 ]
 
+test_comparison_expected_output = [
+    "true",
+    "true",
+    "false",
+    "false",
+    "false",
+    "c",
+]
+
+test_scope_expected_output = [
+    "inner inner",
+    "inner inner",
+]
+
 
 
 
@@ -42,6 +56,8 @@ tests = [
     ("TestPrintStr.lox", test_print_str_expected_output),
     ("TestPrintNum.lox", test_print_num_expected_output),
     ("TestUnary.lox", test_unary_expected_output),
+    ("TestComparison.lox", test_comparison_expected_output),
+    ("TestScope.lox", test_scope_expected_output),
     ]
 
 

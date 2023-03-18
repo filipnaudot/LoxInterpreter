@@ -1,0 +1,16 @@
+// Test Scope
+
+var a = "global";
+
+{
+    var b = "inner";
+    {
+        a = "inner inner";
+        b = "inner inner";
+    }
+    print a;
+    print b;
+}
+
+// expect: inner inner
+//         inner inner
