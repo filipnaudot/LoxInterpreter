@@ -14,7 +14,6 @@ print ("a" == "a");               // expect: true
 print "a" != "b";                 // expect: true
 print "a" == "b";                 // expect: false
 print "a" == 1;                   // expect: false
-print "a" > "b";                  // expect: false
 print "a" and "b" and "c" or "d"; // expect: c
 
 

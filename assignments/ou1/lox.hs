@@ -186,12 +186,6 @@ evalExpr comparison@(Comparison leftExpr op rightExpr) env output =
         ">=" -> (env'', BoolValue (l >= r))
         "<" -> (env'', BoolValue (l < r))
         "<=" -> (env'', BoolValue (l <= r))
-    (StringValue l, StringValue r) ->
-      case op of
-        ">" -> (env'', BoolValue (l > r))
-        ">=" -> (env'', BoolValue (l >= r))
-        "<" -> (env'', BoolValue (l < r))
-        "<=" -> (env'', BoolValue (l <= r))
     _ -> error "Error: Cannot apply comparison operation to values of different types \n"
 
 -- BINARY - TERM

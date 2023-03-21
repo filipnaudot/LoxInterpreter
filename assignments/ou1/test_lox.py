@@ -44,7 +44,6 @@ test_comparison_expected_output = [
     "true",
     "false",
     "false",
-    "false",
     "c",
     #
     "1",
