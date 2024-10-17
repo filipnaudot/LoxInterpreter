@@ -1,6 +1,6 @@
 # Lox Interpreter
 
-This project is an implementation of a Lox language interpreter in Haskell.
+This project is an implementation of a [Lox](https://craftinginterpreters.com/the-lox-language.html) interpreter in Haskell.
 
 ## How to Run
 To run the Lox interpreter with a .lox file, use the following command:
